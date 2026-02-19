@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NH Southwest Market Report · V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f2244;--navy2:#1a3260;--blue:#1d5fa8;--ltblue:#dbeafe;
+  --gold:#c8941a;--ltgold:#fef3c7;--white:#fff;--off:#f4f6fb;
+  --lgray:#edf0f7;--mgray:#8896aa;--dgray:#3d4f6b;
+  --green:#15803d;--ltgreen:#dcfce7;--red:#b91c1c;--ltred:#fee2e2;
+  --purple:#6d28d9;--ltpurple:#ede9fe;--orange:#c2410c;--ltorange:#ffedd5;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);padding:28px 20px 0;position:relative;overflow:hidden;}
+.hd1{position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(200,148,26,.2) 0%,transparent 70%);}
+.hd2{position:absolute;bottom:20px;left:-30px;width:150px;height:150px;background:radial-gradient(circle,rgba(29,95,168,.3) 0%,transparent 70%);}
+.h-eye{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.h-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:4px;}
+.h-sub{font-size:12px;color:rgba(255,255,255,.55);font-weight:300;margin-bottom:16px;}
+.h-stats{display:flex;gap:20px;padding:14px 0;border-top:1px solid rgba(255,255,255,.1);}
+.hst{text-align:center;}.hst-v{font-size:18px;font-weight:700;color:#fff;}
+.hst-l{font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+/* COUNTY TABS */
+.ctabs{display:flex;background:var(--navy);padding:0 16px;border-top:1px solid rgba(255,255,255,.08);}
+.ctab{flex:1;padding:13px 8px;text-align:center;font-size:12px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;}
+.ctab.active{color:#fff;}
+.ctab.ch.active{border-bottom-color:#60a5fa;}
+.ctab.su.active{border-bottom-color:#f97316;}
+.ctab.bo.active{border-bottom-color:var(--gold);}
+
+/* PAGE TABS */
+.ptabs{display:flex;background:#fff;border-bottom:1px solid var(--lgray);overflow-x:auto;scrollbar-width:none;}
+.ptabs::-webkit-scrollbar{display:none;}
+.ptab{flex-shrink:0;padding:11px 16px;font-size:11px;font-weight:600;color:var(--mgray);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.ptab.active{color:var(--navy);border-bottom-color:var(--navy);}
+
+/* PANELS */
+.panel{display:none;padding:18px 16px 140px;}
+.panel.active{display:block;}
+
+/* FILTER BAR */
+.fbar{background:var(--ltgold);border-radius:10px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.fbar-l{font-size:10px;font-weight:700;color:var(--gold);white-space:nowrap;}
+.fbtn{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid #d4a017;background:transparent;color:#8a6010;cursor:pointer;transition:all .2s;}
+.fbtn.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+
+/* SECTION LABEL */
+.sl{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--mgray);margin-bottom:10px;margin-top:22px;}
+.sl:first-child{margin-top:0;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+.kpi-wide{grid-column:1/-1;}
+.kpi{background:#fff;border-radius:12px;padding:14px 12px;box-shadow:0 1px 5px rgba(15,34,68,.07);border-left:3px solid var(--blue);animation:up .35s ease both;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative;}
+.kpi:hover{transform:scale(.98);box-shadow:0 4px 14px rgba(15,34,68,.13);}
+.kpi.gold{border-left-color:var(--gold);}.kpi.green{border-left-color:var(--green);}
+.kpi.purple{border-left-color:var(--purple);}.kpi.orange{border-left-color:var(--orange);}.kpi.red{border-left-color:var(--red);}
+.kpi-tap{position:absolute;top:8px;right:10px;font-size:8px;color:var(--mgray);font-style:italic;}
+.kpi-l{font-size:9px;font-weight:700;color:var(--mgray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;line-height:1.4;}
+.kpi-v{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);line-height:1;}
+.kpi-v.lg{font-size:28px;}.kpi-n{font-size:10px;color:var(--mgray);margin-top:3px;}
+
+/* ══ SELECTABLE CHART WRAPPER ══ */
+.selectable{position:relative;}
+.sel-check{
+  position:absolute;top:10px;right:10px;z-index:20;
+  width:22px;height:22px;border-radius:6px;
+  border:2px solid var(--mgray);background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;flex-shrink:0;
+}
+.sel-check:hover{border-color:var(--blue);}
+.sel-check.checked{background:var(--blue);border-color:var(--blue);}
+.sel-check.checked::after{content:'✓';color:#fff;font-size:12px;font-weight:700;}
+.selectable.is-selected .chart-wrap,
+.selectable.is-selected .stat-row,
+.selectable.is-selected .bed-ladder,
+.selectable.is-selected .decade-chart,
+.selectable.is-selected .ctbl{
+  outline:2px solid var(--blue);outline-offset:2px;
+  box-shadow:0 0 0 4px rgba(29,95,168,.1)!important;
+}
+.pdf-mode-bar{
+  background:var(--ltblue);border-radius:10px;padding:10px 14px;
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+  font-size:11px;color:#1e3a5f;border:1px solid #93c5fd;
+}
+.pdf-mode-bar strong{font-weight:700;}
+.pdf-toggle{
+  margin-left:auto;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;
+  border:none;cursor:pointer;transition:all .2s;
+}
+.pdf-toggle.on{background:var(--blue);color:#fff;}
+.pdf-toggle.off{background:var(--lgray);color:var(--navy);}
+
+/* CHARTS */
+.chart-wrap{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 5px rgba(15,34,68,.07);margin-bottom:12px;position:relative;}
+.chart-title{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:14px;padding-right:28px;}
+.chart-sub{font-size:9px;color:var(--mgray);margin-top:2px;font-weight:400;display:block;}
+.bar-chart{display:flex;align-items:flex-end;gap:3px;height:100px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:height .7s cubic-bezier(.4,0,.2,1);min-height:2px;cursor:pointer;position:relative;}
+.bar:hover::after{content:attr(data-tip);position:absolute;bottom:105%;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:9px;white-space:nowrap;padding:3px 7px;border-radius:5px;font-family:'Inter',sans-serif;z-index:10;pointer-events:none;}
+.bar-lbl{font-size:7px;color:var(--mgray);text-align:center;line-height:1.1;}
+.line-wrap{position:relative;height:110px;margin-bottom:6px;}
+svg.lc{width:100%;height:100%;overflow:visible;}
+.chart-footer{display:flex;justify-content:space-between;font-size:10px;color:var(--mgray);}
+
+/* COMPARE TABLE */
+.ctbl{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 5px rgba(15,34,68,.07);margin-bottom:12px;}
+.crow{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-bottom:1px solid var(--lgray);}
+.crow:last-child{border-bottom:none;}.crow.ch{background:var(--navy);}
+.ccell{padding:10px 12px;font-size:11px;align-self:center;}
+.crow.ch .ccell{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.6);}
+.crow.ch .ccell.cc{color:#93c5fd;}.crow.ch .ccell.sc{color:#fdba74;}
+.c-metric{font-weight:600;color:var(--navy);font-size:11px;}
+.c-val{font-weight:700;font-size:13px;color:var(--navy);text-align:right;}
+.c-val.cheshire{color:var(--blue);}.c-val.sullivan{color:var(--orange);}
+.crow:nth-child(even) .ccell{background:var(--lgray);}
+
+/* DONUT */
+.donut-wrap{display:flex;align-items:center;gap:16px;margin-top:8px;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{display:flex;flex-direction:column;gap:6px;flex:1;}
+.dl-row{display:flex;align-items:center;gap:6px;}
+.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dl-label{font-size:10px;color:var(--dgray);}
+.dl-pct{font-size:10px;font-weight:700;color:var(--navy);margin-left:auto;}
+
+/* PRICE BANDS */
+.band{background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(15,34,68,.06);}
+.band-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.band-name{font-size:12px;font-weight:700;color:var(--navy);}
+.band-pills{display:flex;gap:6px;}
+.bpill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.bpill.c{background:var(--ltblue);color:var(--blue);}.bpill.s{background:var(--ltorange);color:var(--orange);}.bpill.g{background:var(--lgray);color:var(--navy);}
+.band-bars{display:flex;flex-direction:column;gap:4px;}
+.bbar-row{display:flex;align-items:center;gap:8px;}
+.bbar-lbl{font-size:9px;color:var(--mgray);width:20px;text-align:right;}
+.bbar-bg{flex:1;background:var(--lgray);border-radius:4px;height:5px;overflow:hidden;}
+.bbar-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.bbar-fill.c{background:linear-gradient(90deg,var(--blue),#60a5fa);}
+.bbar-fill.s{background:linear-gradient(90deg,var(--orange),#f97316);}
+.bbar-fill.g{background:linear-gradient(90deg,var(--navy),var(--blue));}
+.bbar-pct{font-size:9px;color:var(--mgray);width:32px;}
+
+/* BED LADDER */
+.bed-ladder{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(15,34,68,.07);margin-bottom:12px;}
+.bl-row{display:grid;grid-template-columns:70px 1fr 80px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--lgray);}
+.bl-row:last-child{border-bottom:none;}.bl-row.hdr{background:var(--navy);}
+.bl-row.hdr .bl-cell{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.6);}
+.bl-cell{font-size:12px;}.bl-beds{font-weight:700;color:var(--navy);}
+.bl-bar-wrap{padding:0 8px;}
+.bl-bar-bg{background:var(--lgray);border-radius:4px;height:6px;overflow:hidden;}
+.bl-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),#60a5fa);transition:width .8s ease;}
+.bl-price{font-weight:700;color:var(--blue);text-align:right;font-size:12px;}
+.bl-row:nth-child(odd):not(.hdr){background:var(--lgray);}
+
+/* DECADE */
+.decade-chart{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(15,34,68,.07);margin-bottom:12px;}
+.decade-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.decade-label{font-size:10px;font-weight:600;color:var(--navy);width:80px;flex-shrink:0;}
+.decade-bg{flex:1;background:var(--lgray);border-radius:4px;height:14px;overflow:hidden;}
+.decade-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),#60a5fa);transition:width .8s ease;}
+.decade-cnt{font-size:10px;color:var(--mgray);width:40px;text-align:right;}
+
+/* STAT ROW */
+.stat-row{background:#fff;border-radius:10px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 3px rgba(15,34,68,.06);}
+.sri{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;}
+.sri-l{font-size:12px;color:var(--dgray);}.sri-v{font-size:14px;font-weight:700;color:var(--navy);}
+.srd{height:1px;background:var(--lgray);margin:0 14px;}
+
+/* TOWN CARDS */
+.town-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(15,34,68,.08);margin-bottom:10px;animation:up .35s ease both;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.town-card:hover{box-shadow:0 4px 16px rgba(15,34,68,.14);}.town-card:active{transform:scale(.98);}
+.thdr{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.thdr.c{background:var(--navy);}.thdr.s{background:#7c2d12;}
+.tnw{display:flex;align-items:center;gap:8px;}
+.tname{font-family:'Playfair Display',serif;font-size:16px;color:#fff;}
+.ttap{font-size:9px;color:rgba(255,255,255,.4);font-style:italic;}
+.tbadge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;}
+.tbadge.ok{background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);}
+.tbadge.warn{background:var(--ltgold);color:var(--gold);}.tbadge.full{background:var(--gold);color:var(--navy);}
+.tmetrics{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:12px 10px;gap:4px;}
+.tm{text-align:center;}.tm-v{font-size:13px;font-weight:700;color:var(--navy);}
+.tm-l{font-size:8px;color:var(--mgray);text-transform:uppercase;letter-spacing:.3px;margin-top:2px;}
+.town-warn-bar{background:var(--ltgold);padding:5px 14px;font-size:10px;color:var(--gold);font-weight:600;}
+.town-full-bar{background:var(--ltgreen);padding:5px 14px;font-size:10px;color:var(--green);font-weight:600;}
+
+/* INFO BOXES */
+.ibox{border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;line-height:1.6;}
+.ibox.warn{background:var(--ltgold);color:#7c5500;border-left:3px solid var(--gold);}
+.ibox.info{background:var(--ltblue);color:#1e3a5f;border-left:3px solid var(--blue);}
+.ibox.success{background:var(--ltgreen);color:#14532d;border-left:3px solid var(--green);}
+.ibox strong{font-weight:700;display:block;margin-bottom:3px;}
+
+/* DEFS */
+.def{background:#fff;border-radius:10px;padding:14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(15,34,68,.06);}
+.def-term{font-weight:700;font-size:13px;color:var(--navy);margin-bottom:4px;}
+.def-body{font-size:12px;color:var(--dgray);line-height:1.65;}
+.def-formula{margin-top:7px;background:var(--lgray);border-radius:6px;padding:7px 10px;font-family:monospace;font-size:11px;color:var(--blue);}
+
+/* ══ PDF TRAY ══ */
+.pdf-tray{
+  position:fixed;bottom:0;left:0;right:0;z-index:500;
+  background:var(--navy);padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 -4px 20px rgba(15,34,68,.3);
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.pdf-tray.visible{transform:translateY(0);}
+.tray-count{
+  background:var(--gold);color:var(--navy);
+  font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;
+}
+.tray-label{font-size:12px;color:rgba(255,255,255,.7);flex:1;}
+.tray-clear{font-size:11px;color:rgba(255,255,255,.45);cursor:pointer;text-decoration:underline;white-space:nowrap;}
+.tray-build{
+  background:var(--gold);color:var(--navy);
+  font-size:12px;font-weight:700;padding:10px 18px;border-radius:10px;
+  border:none;cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.tray-build:hover{background:#e0a820;}
+
+/* ══ PDF BUILD MODAL ══ */
+.pdf-modal-overlay{position:fixed;inset:0;background:rgba(10,20,50,.6);z-index:2000;opacity:0;pointer-events:none;transition:opacity .25s;}
+.pdf-modal-overlay.open{opacity:1;pointer-events:all;}
+.pdf-modal{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 36px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:2001;max-height:80vh;overflow-y:auto;}
+.pdf-modal-overlay.open .pdf-modal{transform:translateY(0);}
+.pm-handle{width:40px;height:4px;background:var(--lgray);border-radius:2px;margin:0 auto 20px;}
+.pm-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:4px;}
+.pm-sub{font-size:12px;color:var(--mgray);margin-bottom:20px;}
+.pm-field{margin-bottom:14px;}
+.pm-label{font-size:10px;font-weight:700;color:var(--mgray);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block;}
+.pm-input{width:100%;padding:11px 14px;border:1.5px solid var(--lgray);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;color:var(--navy);outline:none;transition:border-color .2s;}
+.pm-input:focus{border-color:var(--blue);}
+.pm-selected-list{background:var(--off);border-radius:10px;padding:12px 14px;margin-bottom:18px;}
+.pm-selected-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--lgray);}
+.pm-selected-item:last-child{border-bottom:none;}
+.pm-item-dot{width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0;}
+.pm-item-name{font-size:11px;color:var(--navy);flex:1;}
+.pm-item-remove{font-size:10px;color:var(--mgray);cursor:pointer;padding:2px 6px;}
+.pm-item-remove:hover{color:var(--red);}
+.pm-actions{display:flex;gap:10px;}
+.pm-cancel{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--lgray);background:transparent;font-size:13px;font-weight:600;color:var(--mgray);cursor:pointer;}
+.pm-print{flex:2;padding:12px;border-radius:10px;border:none;background:var(--navy);font-size:13px;font-weight:700;color:#fff;cursor:pointer;transition:all .15s;}
+.pm-print:hover{background:var(--navy2);}
+
+/* ══ SPOTLIGHT MODAL ══ */
+.spotlight-overlay{position:fixed;inset:0;background:rgba(10,20,50,.55);z-index:1500;opacity:0;pointer-events:none;transition:opacity .2s;}
+.spotlight-overlay.open{opacity:1;pointer-events:all;}
+.spotlight-sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:20px 18px 36px;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);z-index:1501;max-height:70vh;overflow-y:auto;}
+.spotlight-overlay.open .spotlight-sheet{transform:translateY(0);}
+.spot-handle{width:40px;height:4px;background:var(--mgray);border-radius:2px;margin:0 auto 16px;}
+.spot-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:2px;}
+.spot-sub{font-size:11px;color:var(--mgray);margin-bottom:16px;}
+.spot-close{position:absolute;top:16px;right:16px;width:30px;height:30px;background:var(--lgray);border-radius:50%;border:none;cursor:pointer;font-size:14px;font-weight:700;color:var(--navy);display:flex;align-items:center;justify-content:center;}
+.spot-insight{background:var(--ltblue);border-radius:8px;padding:10px 12px;font-size:11px;color:#1e3a5f;margin-top:12px;line-height:1.5;}
+
+/* ══ TOWN MODAL ══ */
+.town-overlay{position:fixed;inset:0;background:rgba(10,20,50,.6);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s;}
+.town-overlay.open{opacity:1;pointer-events:all;}
+.town-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--off);border-radius:20px 20px 0 0;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:1001;}
+.town-overlay.open .town-sheet{transform:translateY(0);}
+.town-handle{width:40px;height:4px;background:var(--mgray);border-radius:2px;margin:12px auto 0;}
+.t-mheader{padding:16px 18px 10px;position:relative;}
+.t-meyebrow{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.t-meyebrow.c{color:var(--blue);}.t-meyebrow.s{color:var(--orange);}
+.t-mname{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--navy);line-height:1.1;}
+.t-msub{font-size:12px;color:var(--mgray);margin-top:3px;}
+.t-mclose{position:absolute;top:16px;right:16px;width:32px;height:32px;background:var(--lgray);border-radius:50%;border:none;cursor:pointer;font-size:16px;font-weight:700;color:var(--navy);display:flex;align-items:center;justify-content:center;}
+.t-mtabs{display:flex;background:#fff;border-bottom:1px solid var(--lgray);padding:0 16px;overflow-x:auto;scrollbar-width:none;}
+.t-mtabs::-webkit-scrollbar{display:none;}
+.t-mtab{flex-shrink:0;padding:10px 14px;font-size:11px;font-weight:600;color:var(--mgray);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.t-mtab.active{color:var(--navy);border-bottom-color:var(--navy);}
+.t-mbody{padding:16px 16px 32px;}
+.t-mpanel{display:none;}.t-mpanel.active{display:block;}
+.bed-tbl{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(15,34,68,.06);margin-bottom:12px;}
+.bed-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--lgray);}
+.bed-row:last-child{border-bottom:none;}.bed-cell{padding:9px 12px;font-size:11px;}
+.bed-hdr{background:var(--navy);}
+.bed-hdr .bed-cell{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.6);}
+.bed-row:nth-child(odd):not(.bed-hdr){background:var(--lgray);}
+.cs{text-align:center;padding:36px 20px;}
+.cs-icon{font-size:36px;margin-bottom:10px;}
+.cs-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin-bottom:6px;}
+.cs-body{font-size:12px;color:var(--mgray);line-height:1.6;}
+
+/* ══ PRINT LAYOUT ══ */
+#print-root{display:none;}
+
+@media print {
+  body > *:not(#print-root){display:none!important;}
+  #print-root{display:block!important;font-family:'Inter',sans-serif;color:#0f2244;background:#fff;}
+  .pr-page{page-break-after:always;padding:28px 32px;}
+  .pr-page:last-child{page-break-after:avoid;}
+  .pr-cover{background:linear-gradient(135deg,#0f2244,#1a3260);color:#fff;padding:40px;min-height:180px;border-radius:12px;margin-bottom:24px;}
+  .pr-cover-eye{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#c8941a;margin-bottom:8px;font-weight:700;}
+  .pr-cover-title{font-size:28px;font-weight:900;line-height:1.2;margin-bottom:6px;}
+  .pr-cover-sub{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:16px;}
+  .pr-cover-meta{display:flex;gap:24px;border-top:1px solid rgba(255,255,255,.15);padding-top:14px;}
+  .pr-meta-item{font-size:11px;}
+  .pr-meta-label{color:rgba(255,255,255,.5);font-size:9px;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px;}
+  .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .pr-grid.single{grid-template-columns:1fr;}
+  .pr-item{background:#fff;border:1px solid #edf0f7;border-radius:10px;padding:14px;break-inside:avoid;}
+  .pr-item-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8896aa;margin-bottom:10px;}
+  .pr-item-note{font-size:10px;color:#3d4f6b;margin-top:8px;line-height:1.5;background:#f4f6fb;border-radius:6px;padding:7px 9px;}
+  .pr-footer{font-size:9px;color:#8896aa;text-align:center;padding-top:12px;border-top:1px solid #edf0f7;margin-top:12px;}
+  @page{margin:0.4in;}
+}
+
+
+/* AGENT BRANDING */
+.pm-section-hdr{font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;padding:10px 0 6px;border-top:1px solid var(--lgray);margin-top:4px;display:flex;align-items:center;gap:6px;}
+.pm-section-hdr span{flex:1;}
+.pm-save-brand{font-size:9px;font-weight:600;color:var(--blue);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;font-family:'Inter',sans-serif;}
+.pm-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pm-input-sm{width:100%;padding:9px 12px;border:1.5px solid var(--lgray);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;color:var(--navy);outline:none;transition:border-color .2s;box-sizing:border-box;}
+.pm-input-sm:focus{border-color:var(--blue);}
+.pm-saved-badge{font-size:9px;background:var(--ltgreen);color:#14532d;border-radius:6px;padding:2px 7px;display:none;margin-left:6px;font-weight:600;}
+.pm-saved-badge.show{display:inline;}
+.pr-agent-card{display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18);}
+.pr-agent-logo{width:48px;height:48px;border-radius:8px;object-fit:contain;flex-shrink:0;}
+.pr-agent-logo-placeholder{width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.pr-agent-info{flex:1;}
+.pr-agent-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
+.pr-agent-brokerage{font-size:11px;color:rgba(255,255,255,.65);}
+.pr-agent-contact{font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;}
+.town-pdf-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 14px;background:var(--ltblue);border:none;border-radius:8px;font-size:11px;font-weight:600;color:var(--blue);cursor:pointer;transition:all .15s;width:100%;margin-top:8px;font-family:'Inter',sans-serif;}
+.town-pdf-btn:hover{background:#dbeafe;}
+.town-pdf-btn.added{background:var(--ltgreen);color:#14532d;}
+
+@keyframes up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.kpi:nth-child(1){animation-delay:.04s}.kpi:nth-child(2){animation-delay:.08s}
+.kpi:nth-child(3){animation-delay:.12s}.kpi:nth-child(4){animation-delay:.16s}
+
+/* ══ V5: TOOLBAR (range + perspective) ══ */
+.v5-toolbar{background:#fff;border-bottom:1px solid var(--lgray);padding:8px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.v5-tl{font-size:9px;font-weight:700;color:var(--mgray);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;}
+.range-grp{display:flex;background:var(--lgray);border-radius:20px;overflow:hidden;}
+.rbtn{padding:4px 12px;border:none;background:transparent;font-size:11px;font-weight:600;color:var(--mgray);cursor:pointer;transition:all .18s;}
+.rbtn.active{background:var(--navy);color:#fff;border-radius:20px;}
+.persp-grp{display:flex;background:var(--lgray);border-radius:20px;overflow:hidden;margin-left:auto;}
+.pbtn{padding:4px 12px;border:none;background:transparent;font-size:11px;font-weight:600;color:var(--mgray);cursor:pointer;transition:all .18s;}
+.pbtn.active-neutral{background:var(--navy);color:#fff;border-radius:20px;}
+.pbtn.active-seller{background:var(--green);color:#fff;border-radius:20px;}
+.pbtn.active-buyer{background:var(--blue);color:#fff;border-radius:20px;}
+.persp-banner{margin-bottom:12px;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:600;line-height:1.5;display:none;}
+.persp-banner.seller{display:block;background:var(--ltgreen);color:#14532d;border-left:3px solid var(--green);}
+.persp-banner.buyer{display:block;background:var(--ltblue);color:#1e3a5f;border-left:3px solid var(--blue);}
+
+/* ══ V5: TOOLTIPS ══ */
+.tip{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;background:var(--lgray);color:var(--mgray);font-size:8px;font-weight:700;cursor:default;position:relative;vertical-align:middle;margin-left:3px;flex-shrink:0;}
+.tip-box{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:6px 10px;border-radius:8px;width:190px;line-height:1.5;z-index:300;font-weight:400;white-space:normal;pointer-events:none;}
+.tip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--navy);}
+.tip:hover .tip-box,.tip:focus .tip-box{display:block;}
+
+/* ══ V5: COMPARE TOOL ══ */
+.cmp-pickers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.cmp-sel{width:100%;padding:9px 12px;border:1.5px solid var(--lgray);border-radius:10px;font-size:12px;font-family:'Inter',sans-serif;color:var(--navy);background:#fff;appearance:none;cursor:pointer;}
+.cmp-sel:focus{outline:none;border-color:var(--blue);}
+.cmp-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cmp-card{border-radius:12px;padding:14px;border:2px solid var(--lgray);background:#fff;}
+.cmp-card.winner{border-color:var(--gold);background:linear-gradient(135deg,#fff,var(--ltgold));}
+.cmp-name{font-weight:700;font-size:13px;margin-bottom:10px;}
+.cmp-metric{margin-bottom:8px;}
+.cmp-ml{font-size:9px;color:var(--mgray);text-transform:uppercase;letter-spacing:.5px;}
+.cmp-mv{font-size:15px;font-weight:700;margin-top:1px;}
+.cmp-mv.better{color:var(--green);}
+.cmp-mv.worse{color:var(--red);}
+.cmp-empty{text-align:center;padding:36px 20px;color:var(--mgray);font-size:12px;}
+
+/* ══ V5: SHARE CARD ══ */
+.share-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:3000;display:none;align-items:center;justify-content:center;}
+.share-overlay.open{display:flex;}
+.share-wrap{width:300px;}
+.share-card-inner{background:linear-gradient(150deg,var(--navy) 0%,#1a3880 100%);border-radius:18px 18px 0 0;padding:24px 22px 22px;position:relative;overflow:hidden;}
+.share-card-inner::before{content:'';position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(200,148,26,.25),transparent 70%);}
+.sc-eye{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:4px;}
+.sc-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:2px;}
+.sc-period{font-size:10px;color:rgba(255,255,255,.5);margin-bottom:18px;}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.sc-stat{background:rgba(255,255,255,.1);border-radius:10px;padding:10px;}
+.sc-stat-v{font-size:20px;font-weight:700;color:#fff;}
+.sc-stat-l{font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+.sc-foot{font-size:9px;color:rgba(255,255,255,.35);border-top:1px solid rgba(255,255,255,.1);padding-top:10px;}
+.share-actions{display:flex;gap:8px;background:#fff;padding:12px;border-radius:0 0 18px 18px;}
+.sa-btn{flex:1;padding:10px;border-radius:9px;border:none;font-size:12px;font-weight:700;cursor:pointer;}
+.sa-close{background:var(--lgray);color:var(--navy);}
+.sa-save{background:var(--gold);color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hd1"></div><div class="hd2"></div>
+  <div class="h-eye">Southwestern NH · Market Intelligence</div>
+  <div class="h-title">Cheshire &amp; Sullivan<br>County Report</div>
+  <div class="h-sub">PrimeMLS · 12-Month Closed Sales · Feb 2025 – Feb 2026</div>
+  <div class="h-stats">
+    <div class="hst"><div class="hst-v">1,501</div><div class="hst-l">Total Sales</div></div>
+    <div class="hst"><div class="hst-v">923</div><div class="hst-l">Cheshire</div></div>
+    <div class="hst"><div class="hst-v">578</div><div class="hst-l">Sullivan</div></div>
+    <div class="hst"><div class="hst-v">38</div><div class="hst-l">Towns</div></div>
+  </div>
+</div>
+
+<div class="ctabs">
+  <div class="ctab ch active" onclick="setCounty('cheshire',this)">Cheshire</div>
+  <div class="ctab su" onclick="setCounty('sullivan',this)">Sullivan</div>
+  <div class="ctab bo" onclick="setCounty('both',this)">Side by Side</div>
+</div>
+
+<div class="ptabs">
+  <div class="ptab active" onclick="setPage('overview',this)">Overview</div>
+  <div class="ptab" onclick="setPage('trends',this)">Trends</div>
+  <div class="ptab" onclick="setPage('market',this)">Market Health</div>
+  <div class="ptab" onclick="setPage('bands',this)">Price Bands</div>
+  <div class="ptab" onclick="setPage('towns',this)">Towns</div>
+  <div class="ptab" onclick="setPage('compare',this)">Compare</div>
+  <div class="ptab" onclick="setPage('defs',this)">Definitions</div>
+</div>
+
+<!-- V5 TOOLBAR -->
+<div class="v5-toolbar">
+  <span class="v5-tl">Range:</span>
+  <div class="range-grp">
+    <button class="rbtn" onclick="setRange(3,this)">3mo</button>
+    <button class="rbtn" onclick="setRange(6,this)">6mo</button>
+    <button class="rbtn active" onclick="setRange(12,this)">12mo</button>
+  </div>
+  <div class="persp-grp">
+    <button class="pbtn active-neutral" id="pb-neutral" onclick="setPersp('neutral',this)">All</button>
+    <button class="pbtn" id="pb-seller" onclick="setPersp('seller',this)">Seller</button>
+    <button class="pbtn" id="pb-buyer" onclick="setPersp('buyer',this)">Buyer</button>
+  </div>
+</div>
+
+<div class="panel active" id="panel-overview">
+  <div class="fbar">
+    <span class="fbar-l">Property Type:</span>
+    <button class="fbtn active" onclick="setPtype('all',this)">All Types</button>
+    <button class="fbtn" onclick="setPtype('sf',this)">Single Family</button>
+    <button class="fbtn" onclick="setPtype('mobile',this)">Mobile Home</button>
+    <button class="fbtn" onclick="setPtype('condo',this)">Condo</button>
+  </div>
+  <div id="overview-content"></div>
+</div>
+<div class="panel" id="panel-trends"><div id="trends-content"></div></div>
+<div class="panel" id="panel-market"><div id="market-content"></div></div>
+<div class="panel" id="panel-bands"><div id="bands-content"></div></div>
+<div class="panel" id="panel-towns"><div id="towns-content"></div></div>
+<div class="panel" id="panel-defs">
+  <div class="sl">Metric Definitions &amp; Methodology</div>
+  <div class="def"><div class="def-term">Median Sale Price</div><div class="def-body">The middle value when all sale prices are ranked. Half of sales occurred above this figure, half below. Resistant to distortion by outlier transactions.</div></div>
+  <div class="def"><div class="def-term">Days on Market (DOM)</div><div class="def-body">Calendar days from original MLS list date to accepted contract date. Lower DOM = stronger seller's market conditions.</div></div>
+  <div class="def"><div class="def-term">List-to-Sale Ratio</div><div class="def-body">Sale price divided by final list price. At or above 100% means buyers paid asking or above.</div><div class="def-formula">List-to-Sale % = (Sale Price ÷ Final List Price) × 100</div></div>
+  <div class="def"><div class="def-term">Over-Asking Rate</div><div class="def-body">Percentage of closed sales where the final sale price exceeded the final list price. A declining rate signals softening demand.</div></div>
+  <div class="def"><div class="def-term">Price Reduction Rate</div><div class="def-body">Percentage of sold properties that had at least one price reduction before going under contract. A rising rate signals sellers are overpricing relative to market.</div></div>
+  <div class="def"><div class="def-term">Days to Close</div><div class="def-body">Calendar days from accepted contract to closing. Reflects financing timelines, inspection periods, and transaction complexity.</div></div>
+  <div class="def"><div class="def-term">Median Price Per Square Foot</div><div class="def-body">Median of (sale price ÷ above-grade finished sq ft). Above-grade only – basement excluded per standard appraisal methodology.</div></div>
+  <div class="def"><div class="def-term">Data Source</div><div class="def-body">PrimeMLS closed sale records, Cheshire and Sullivan Counties, NH. Feb 2025 – Feb 2026. Feb 2026 is partial data through Feb 17.</div></div>
+</div>
+
+<div class="panel" id="panel-compare"><div id="compare-content"></div></div>
+
+<!-- SHARE OVERLAY -->
+<div class="share-overlay" id="share-overlay">
+  <div class="share-wrap">
+    <div class="share-card-inner" id="share-card-inner"></div>
+    <div class="share-actions">
+      <button class="sa-btn sa-close" onclick="closeShare()">Close</button>
+      <button class="sa-btn sa-save" onclick="alert('Screenshot this card to share on social media!')">📸 Screenshot</button>
+    </div>
+  </div>
+</div>
+<div class="pdf-tray" id="pdf-tray">
+  <div class="tray-count" id="tray-count">0 selected</div>
+  <div class="tray-label">items ready for PDF</div>
+  <div class="tray-clear" onclick="clearAll()">Clear all</div>
+  <button class="tray-build" onclick="openPdfModal()">📄ž Build PDF</button>
+</div>
+
+<!-- PDF BUILD MODAL -->
+<div class="pdf-modal-overlay" id="pdf-modal-overlay" onclick="closePdfModalOutside(event)">
+  <div class="pdf-modal">
+    <div class="pm-handle"></div>
+    <div class="pm-title">Build Your PDF</div>
+    <div class="pm-sub">Customize your presentation before printing</div>
+    <div class="pm-field">
+      <label class="pm-label">Presentation Title / Property Address</label>
+      <input class="pm-input" id="pm-title-input" type="text" placeholder="e.g. 123 Main St · Seller Presentation">
+    </div>
+    <div class="pm-field">
+      <label class="pm-label">Prepared For (optional)</label>
+      <input class="pm-input" id="pm-client-input" type="text" placeholder="e.g. The Johnson Family">
+    </div>
+    <div class="pm-section-hdr">
+      <span>Agent Profile <span class="pm-saved-badge" id="pm-brand-badge">Saved ✓</span></span>
+      <button class="pm-save-brand" onclick="saveBranding()">Save for future use</button>
+    </div>
+    <div class="pm-row">
+      <input class="pm-input-sm" id="pm-brand-name" type="text" placeholder="Agent Name">
+      <input class="pm-input-sm" id="pm-brand-brokerage" type="text" placeholder="Brokerage">
+    </div>
+    <div class="pm-row" style="margin-top:8px">
+      <input class="pm-input-sm" id="pm-brand-phone" type="tel" placeholder="Phone">
+      <input class="pm-input-sm" id="pm-brand-email" type="email" placeholder="Email">
+    </div>
+    <div class="pm-field" style="margin-top:8px">
+      <input class="pm-input" id="pm-brand-logo" type="url" placeholder="Brokerage logo URL (optional)">
+    </div>
+    <div class="pm-field">
+      <label class="pm-label">Selected Charts (<span id="pm-count">0</span>)</label>
+      <div class="pm-selected-list" id="pm-selected-list"></div>
+    </div>
+    <div class="pm-actions">
+      <button class="pm-cancel" onclick="closePdfModal()">Cancel</button>
+      <button class="pm-print" onclick="buildAndPrint()">🖨️ Print / Save as PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- SPOTLIGHT MODAL -->
+<div class="spotlight-overlay" id="spot-overlay" onclick="closeSpot(event)">
+  <div class="spotlight-sheet">
+    <div class="spot-handle"></div>
+    <button class="spot-close" onclick="closeSpotBtn()">✕</button>
+    <div class="spot-title" id="spot-title"></div>
+    <div class="spot-sub" id="spot-sub"></div>
+    <div id="spot-body"></div>
+  </div>
+</div>
+
+<!-- TOWN MODAL -->
+<div class="town-overlay" id="town-overlay" onclick="closeTownModal(event)">
+  <div class="town-sheet">
+    <div class="town-handle"></div>
+    <div class="t-mheader">
+      <div class="t-meyebrow" id="t-eyebrow"></div>
+      <div class="t-mname" id="t-name"></div>
+      <div class="t-msub" id="t-sub"></div>
+      <button id="town-pdf-btn" class="town-pdf-btn" onclick="addTownToPdf()">📋 Add Town to PDF</button>
+      <button class="t-mclose" onclick="closeTownBtn()">✕</button>
+    </div>
+    <div class="t-mtabs" id="t-tabs"></div>
+    <div class="t-mbody" id="t-body"></div>
+  </div>
+</div>
+
+<!-- PRINT ROOT (hidden, only shown during print) -->
+<div id="print-root"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const MO=['Feb 25','Mar 25','Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26'];
+const MOS=['F','M','A','M','J','J','A','S','O','N','D','J','F'];
+const CAL_MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const CD={
+  cheshire:{
+    label:'Cheshire County',color:'#1d5fa8',cls:'c',
+    // ╝╝ 12-month summaries (source: PrimeMLS CSV) ╝╝
+    all:{median:'$365,000',sales:923,dom:12,lts:'100.0%',ppsf:'$241',dtc:33,reduction:'26.9%',overask:'36.6%'},
+    sf:{median:'$395,000',sales:757,dom:11,lts:'100.0%',ppsf:'$253',dtc:33,reduction:'26.4%',overask:'38.0%'},
+    mobile:{median:'$122,250',sales:98,dom:19,lts:'98.3%',ppsf:'$117',dtc:31,reduction:'31.6%',overask:'23.5%'},
+    condo:{median:'$320,000',sales:68,dom:9,lts:'100.0%',ppsf:'$244',dtc:32,reduction:'25.0%',overask:'39.7%'},
+    // ╝╝ All-types monthly (13 months Feb25–Feb26) ╝╝
+    monthly:{
+      sales:[21,49,66,71,97,99,104,98,100,83,77,41,17],
+      median:[360000,360000,362500,340000,404000,371000,362500,365000,362500,367500,365000,337900,347000],
+      dom:[33,7,11.5,9,7,8,13,10,13,13,17,37,53],
+      lts:[100,100,100,100,100,100,100,100,100,100,98.6,98.5,97.1],
+      reduction:[38.1,24.5,22.7,15.5,18.6,19.2,27.9,22.4,34.0,31.3,35.1,41.5,58.8],
+      overask:[42.9,36.7,47.0,50.7,43.3,39.4,33.7,46.9,32.0,26.5,28.6,12.2,5.9],
+      dtc:[36,30,34,31,33,33,37,36,33,32,31,34,29],
+      ppsf:[233,235,245,230,232,248,238,257,244,257,240,228,232]
+    },
+    // ╝╝ Single Family monthly ╝╝
+    monthly_sf:{
+      sales:[19,42,59,56,81,76,85,82,81,67,62,36,11],
+      median:[365000,385000,380000,359309,425000,400500,380000,395000,399000,412000,377500,399000,475000],
+      dom:[45,9,10,8.5,7,7.5,12,8.5,13,13,13.5,38.5,31],
+      lts:[100.0,100.0,100.0,101.2,100.0,100.0,100.0,100.0,100.0,99.4,100.0,98.2,97.1],
+      overask:[36.8,35.7,49.2,55.4,45.7,42.1,35.3,51.2,32.1,22.4,30.6,11.1,9.1],
+      reduction:[42.1,28.6,22.0,16.1,18.5,19.7,24.7,19.5,32.1,34.3,35.5,41.7,45.5],
+      dtc:[36,30,34,31,32,34,38,36,34,33,30,35,29],
+      ppsf:[235,240,245,241,249,264,245,278,257,260,251,246,253]
+    },
+    // ╝╝ Mobile Home monthly ╝╝
+    monthly_mobile:{
+      sales:[2,4,4,8,11,14,12,7,11,11,8,4,2],
+      median:[193000,154750,176250,122000,140000,85500,86750,175000,122000,155900,108250,115000,111000],
+      dom:[5.5,11.5,23.5,22,21,15.5,18.5,24,8,9,18,19,105.5],
+      lts:[109.9,99.9,100.4,100.0,100.0,95.2,92.3,95.0,100.0,100.0,94.4,97.0,78.8],
+      overask:[100.0,25.0,50.0,25.0,36.4,14.3,8.3,14.3,18.2,36.4,12.5,25.0,0.0],
+      reduction:[0.0,0.0,50.0,12.5,27.3,21.4,41.7,57.1,45.5,27.3,25.0,25.0,100.0],
+      dtc:[40,31,32,30,36,33,28,31,26,25,28,38,33],
+      ppsf:[132,120,181,121,147,100,87,200,112,147,93,109,113]
+    },
+    // ╝╝ Condo monthly (0 sales Feb 25) ╝╝
+    monthly_condo:{
+      sales:[0,3,3,7,5,9,7,9,8,5,7,1,4],
+      median:[0,340000,325000,273000,290000,361000,320000,265000,284000,390000,385000,335499,254750],
+      dom:[0,4,11,12,3,5,9,21,9,6,33,37,99],
+      lts:[0,101.5,100.0,98.7,100.0,101.3,100.0,100.0,100.0,101.3,98.6,100.0,95.8],
+      overask:[0,66.7,0.0,42.9,20.0,55.6,57.1,33.3,50.0,60.0,28.6,0.0,0.0],
+      reduction:[0,0.0,0.0,14.3,0.0,11.1,42.9,22.2,37.5,0.0,42.9,100.0,75.0],
+      dtc:[0,16,28,37,38,29,31,36,28,41,36,20,28],
+      ppsf:[0,299,265,236,223,268,244,241,245,267,246,228,227]
+    },
+    financing:[{label:'Conventional',pct:48.0,color:'#1d5fa8'},{label:'Cash',pct:35.1,color:'#15803d'},{label:'FHA',pct:8.1,color:'#c8941a'},{label:'VA',pct:6.3,color:'#6d28d9'},{label:'Other',pct:2.5,color:'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:22,median:246500,pct:2.9},{beds:'2 BR',count:236,median:279600,pct:31.2},{beds:'3 BR',count:446,median:380000,pct:59.0},{beds:'4 BR',count:177,median:470000,pct:23.4},{beds:'5 BR',count:25,median:585000,pct:3.3}],
+    decades:[{era:'Pre-1950',count:259,pct:34.2},{era:'1950s–60s',count:147,pct:19.4},{era:'1970s–80s',count:176,pct:23.3},{era:'1990s–00s',count:116,pct:15.3},{era:'2010s+',count:57,pct:7.5}],
+    seasonal:{sales:[41,38,49,66,71,97,99,104,98,100,83,77],median:[337900,360000,360000,362500,340000,404000,371000,362500,365000,362500,367500,365000]},
+    bands:[{name:'Under $200k',count:131,pct:14.2},{name:'$200k–$299k',count:171,pct:18.5},{name:'$300k–$399k',count:249,pct:27.0},{name:'$400k–$499k',count:153,pct:16.6},{name:'$500k–$599k',count:89,pct:9.6},{name:'$600k+',count:130,pct:14.1}],
+    towns:[
+      {name:'Keene',sales:255,median:'$341,000',dom:8,lts:'100.0%',ppsf:'$223'},{name:'Swanzey',sales:81,median:'$350,000',dom:14,lts:'100.0%',ppsf:'$237'},
+      {name:'Jaffrey',sales:75,median:'$400,000',dom:17,lts:'100.0%',ppsf:'$262'},{name:'Rindge',sales:73,median:'$445,000',dom:13,lts:'100.0%',ppsf:'$281'},
+      {name:'Hinsdale',sales:60,median:'$272,500',dom:14,lts:'100.0%',ppsf:'$192'},{name:'Winchester',sales:52,median:'$276,000',dom:14,lts:'97.5%',ppsf:'$186'},
+      {name:'Fitzwilliam',sales:49,median:'$360,000',dom:15,lts:'99.0%',ppsf:'$241'},{name:'Walpole',sales:41,median:'$400,000',dom:9,lts:'100.0%',ppsf:'$255'},
+      {name:'Chesterfield',sales:39,median:'$470,000',dom:8,lts:'100.0%',ppsf:'$271'},{name:'Stoddard',sales:32,median:'$425,750',dom:12,lts:'100.0%',ppsf:'$278'},
+      {name:'Marlborough',sales:25,median:'$310,000',dom:24,lts:'99.2%',ppsf:'$218'},{name:'Troy',sales:21,median:'$310,000',dom:9,lts:'100.0%',ppsf:'$210'},
+      {name:'Dublin',sales:19,median:'$583,000',dom:12,lts:'100.0%',ppsf:'$331'},{name:'Alstead',sales:18,median:'$296,799',dom:18,lts:'98.3%',ppsf:'$213'},
+      {name:'Westmoreland',sales:16,median:'$474,500',dom:8,lts:'99.3%',ppsf:'$278'},{name:'Richmond',sales:15,median:'$395,000',dom:45,lts:'100.0%',ppsf:'$255'},
+      {name:'Gilsum',sales:12,median:'$289,200',dom:12,lts:'100.0%',ppsf:'$204'},{name:'Marlow',sales:10,median:'$400,000',dom:10,lts:'100.0%',ppsf:'$262'},
+      {name:'Sullivan',sales:10,median:'$265,000',dom:38,lts:'95.5%',ppsf:'$196'},{name:'Harrisville',sales:8,median:'$480,000',dom:7,lts:'102.4%',ppsf:'$298'},
+      {name:'Nelson',sales:5,median:'$575,000',dom:68,lts:'97.0%',ppsf:'$318'},{name:'Surry',sales:5,median:'$475,000',dom:15,lts:'96.9%',ppsf:'$262'},
+      {name:'Roxbury',sales:2,median:'$407,850',dom:27,lts:'103.0%',ppsf:'–'}
+    ]
+  },
+  sullivan:{
+    label:'Sullivan County',color:'#c2410c',cls:'s',
+    // ╝╝ 12-month summaries (source: PrimeMLS CSV) ╝╝
+    all:{median:'$356,200',sales:578,dom:18,lts:'99.2%',ppsf:'$234',dtc:40,reduction:'30.1%',overask:'25.3%'},
+    sf:{median:'$385,000',sales:474,dom:16,lts:'100.0%',ppsf:'$242',dtc:39,reduction:'28.9%',overask:'27.2%'},
+    mobile:{median:'$99,000',sales:70,dom:20,lts:'97.4%',ppsf:'$94',dtc:38,reduction:'30.0%',overask:'18.6%'},
+    condo:{median:'$372,499',sales:34,dom:35,lts:'97.7%',ppsf:'$310',dtc:44,reduction:'47.1%',overask:'11.8%'},
+    // ╝╝ All-types monthly ╝╝
+    monthly:{
+      sales:[30,32,35,49,54,52,61,57,65,45,53,34,11],
+      median:[345000,325000,350000,325000,350000,392000,380000,390000,330000,353000,379000,352500,315000],
+      dom:[44.5,37,19,16,9,10,13,14,30,18,17,39,60],
+      lts:[99.8,97.8,99.2,99.3,100,99.9,100,98.7,97.1,99.2,100,99.1,97.7],
+      reduction:[43.3,31.2,28.6,24.5,16.7,15.4,23.0,35.1,43.1,26.7,37.7,38.2,45.5],
+      overask:[26.7,31.2,25.7,28.6,40.7,28.8,24.6,22.8,21.5,17.8,18.9,17.6,18.2],
+      dtc:[34,43,37,42,38,40,37,40,39,40,39,39,43],
+      ppsf:[209,215,236,250,251,242,254,254,223,236,233,217,188]
+    },
+    // ╝╝ Single Family monthly ╝╝
+    monthly_sf:{
+      sales:[24,21,30,39,48,45,48,52,49,37,46,28,7],
+      median:[363000,377500,380000,360000,372500,400000,417500,412500,400000,385000,399000,372500,315000],
+      dom:[68,31,23.5,8,8.5,9,13,13.5,30,18,22.5,28.5,60],
+      lts:[100.0,98.5,98.4,100.0,100.0,100.0,100.0,98.9,97.0,99.0,100.0,100.0,91.5],
+      overask:[25.0,33.3,23.3,35.9,43.8,31.1,29.2,25.0,22.4,16.2,19.6,21.4,14.3],
+      reduction:[50.0,23.8,30.0,17.9,10.4,13.3,22.9,30.8,42.9,32.4,41.3,39.3,42.9],
+      dtc:[36,44,38,42,38,40,38,39,39,42,40,39,35],
+      ppsf:[213,220,238,264,261,243,265,257,240,238,234,222,188]
+    },
+    // ╝╝ Mobile Home monthly ╝╝
+    monthly_mobile:{
+      sales:[4,7,2,7,5,4,9,3,12,6,5,4,2],
+      median:[129500,120000,55000,110000,145000,108250,75000,53000,129500,90950,135000,66750,118000],
+      dom:[9.5,45,3.5,36,39,24.5,16,63,19.5,16.5,11,99.5,56],
+      lts:[99.0,92.4,100.0,93.3,97.3,95.6,97.5,89.8,99.1,100.0,100.0,83.5,100.3],
+      overask:[50.0,14.3,0.0,0.0,20.0,25.0,11.1,0.0,25.0,33.3,20.0,0.0,50.0],
+      reduction:[25.0,42.9,0.0,42.9,60.0,25.0,11.1,66.7,33.3,0.0,0.0,50.0,50.0],
+      dtc:[37,36,18,34,55,35,32,67,38,38,37,41,55],
+      ppsf:[87,96,61,94,121,120,84,54,116,95,122,85,82]
+    },
+    // ╝╝ Condo monthly (thin – 34 sales total) ╝╝
+    monthly_condo:{
+      sales:[2,4,3,3,1,3,4,2,4,2,2,2,2],
+      median:[246000,422500,330000,339500,355000,499000,417000,361000,268750,423950,366500,265000,447499],
+      dom:[2.5,77.5,11,88,82,28,28.5,33,71.5,21,60,40.5,71],
+      lts:[96.7,97.8,101.5,98.7,94.7,99.2,98.1,97.2,95.7,97.6,95.3,99.0,97.8],
+      overask:[0.0,50.0,66.7,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
+      reduction:[0.0,50.0,33.3,66.7,100.0,33.3,50.0,100.0,75.0,0.0,50.0,0.0,50.0],
+      dtc:[12,46,36,45,23,54,40,40,50,42,30,40,68],
+      ppsf:[215,310,238,259,283,364,334,250,241,309,516,314,348]
+    },
+    financing:[{label:'Conventional',pct:46.5,color:'#1d5fa8'},{label:'Cash',pct:33.6,color:'#15803d'},{label:'FHA',pct:8.7,color:'#c8941a'},{label:'VA',pct:6.9,color:'#6d28d9'},{label:'Other',pct:4.3,color:'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:17,median:155000,pct:2.9},{beds:'2 BR',count:146,median:287500,pct:25.3},{beds:'3 BR',count:296,median:375000,pct:51.2},{beds:'4 BR',count:97,median:440000,pct:16.8},{beds:'5 BR',count:14,median:617500,pct:2.4}],
+    decades:[{era:'Pre-1950',count:166,pct:35.0},{era:'1950s–60s',count:45,pct:9.5},{era:'1970s–80s',count:130,pct:27.4},{era:'1990s–00s',count:102,pct:21.5},{era:'2010s+',count:31,pct:6.5}],
+    seasonal:{sales:[34,41,32,35,49,54,52,61,57,65,45,53],median:[352500,340000,325000,350000,325000,350000,392000,380000,390000,330000,353000,379000]},
+    bands:[{name:'Under $200k',count:99,pct:17.1},{name:'$200k–$299k',count:108,pct:18.7},{name:'$300k–$399k',count:141,pct:24.4},{name:'$400k–$499k',count:92,pct:15.9},{name:'$500k–$599k',count:50,pct:8.7},{name:'$600k+',count:88,pct:15.2}],
+    towns:[
+      {name:'Claremont',sales:140,median:'$259,500',dom:17,lts:'98.8%',ppsf:'$200'},{name:'Grantham',sales:88,median:'$502,500',dom:17,lts:'98.6%',ppsf:'$295'},
+      {name:'Newport',sales:87,median:'$310,000',dom:16,lts:'100.0%',ppsf:'$218'},{name:'Charlestown',sales:67,median:'$238,000',dom:21,lts:'97.5%',ppsf:'$172'},
+      {name:'Sunapee',sales:53,median:'$585,000',dom:25,lts:'98.8%',ppsf:'$320'},{name:'Washington',sales:31,median:'$430,000',dom:15,lts:'100.0%',ppsf:'$272'},
+      {name:'Unity',sales:22,median:'$427,279',dom:17,lts:'100.0%',ppsf:'$268'},{name:'Goshen',sales:17,median:'$420,000',dom:42,lts:'99.3%',ppsf:'$265'},
+      {name:'Acworth',sales:16,median:'$396,450',dom:24,lts:'95.6%',ppsf:'$255'},{name:'Springfield',sales:15,median:'$435,000',dom:9,lts:'100.0%',ppsf:'$278'},
+      {name:'Cornish',sales:12,median:'$512,500',dom:33,lts:'98.9%',ppsf:'$300'},{name:'Croydon',sales:10,median:'$414,000',dom:6,lts:'100.5%',ppsf:'$265'},
+      {name:'Plainfield',sales:10,median:'$477,500',dom:14,lts:'99.6%',ppsf:'$288'},{name:'Lempster',sales:8,median:'$360,000',dom:28,lts:'98.8%',ppsf:'$238'},
+      {name:'Langdon',sales:2,median:'$406,750',dom:7,lts:'102.5%',ppsf:'–'}
+    ]
+  }
+};
+
+const TOWNS={
+  'Keene':{
+    county:'cheshire',sales:255,median:'$345,000',medianRaw:345000,avg:'$369,295',dom:8,lts:'100.0%',ppsf:'$238',sqft:910,yearBuilt:1963,beds:3.0,priceMin:'$28,500',priceMax:'$1,385,000',origToSale:'100.0%',dtc:31,reduction:'24.3%',overask:'41.2%',lotAcres:'0.29 acres',
+    propTypes:{sf:194,condo:36,mobile:25},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[10, 14, 24, 29, 26, 31, 26, 26, 16, 20, 22, 11],median:[308750, 400500, 375000, 325000, 360750, 389000, 309300, 343000, 290500, 372500, 350000, 335499],dom:[9.0, 5.0, 10.5, 7.0, 6.5, 7.0, 11.5, 6.5, 7.0, 21.0, 10.5, 37.0],ppsf:[281, 370, 316, 254, 152, 214, 219, 217, 273, 363, 178, 347],overask:[40.0, 64.3, 41.7, 48.3, 42.3, 61.3, 42.3, 42.3, 25.0, 25.0, 22.7, 18.2],reduction:[20.0, 14.3, 25.0, 20.7, 19.2, 16.1, 38.5, 11.5, 25.0, 30.0, 40.9, 36.4],dtc:[32, 28, 34, 30, 30, 30, 34, 30, 30, 44, 34, 60]},
+    bands:[{name:'Under $200k',count:36,pct:14.1},{name:'$200k–$299k',count:55,pct:21.6},{name:'$300k–$399k',count:74,pct:29.0},{name:'$400k–$499k',count:44,pct:17.3},{name:'$500k–$599k',count:21,pct:8.2},{name:'$600k+',count:25,pct:9.8}],
+    financing:[{label:'Conventional',pct:51.0,'color':'#1d5fa8'},{label:'Cash',pct:37.3,'color':'#15803d'},{label:'FHA',pct:5.9,'color':'#c8941a'},{label:'VA',pct:3.9,'color':'#6d28d9'},{label:'Other',pct:2.0,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:2,median:310850,pct:0.8},{beds:'2 BR',count:67,median:240000,pct:26.3},{beds:'3 BR',count:107,median:352000,pct:42.0},{beds:'4 BR',count:70,median:435000,pct:27.5},{beds:'5 BR',count:7,median:585000,pct:2.7},{beds:'6 BR',count:1,median:572320,pct:0.4},{beds:'7 BR',count:1,median:699000,pct:0.4}],
+    decades:[{era:'1800s',count:27,pct:10.6},{era:'Pre-1920',count:26,pct:10.2},{era:'1920s–40s',count:43,pct:16.9},{era:'1950s–60s',count:54,pct:21.2},{era:'1970s–80s',count:68,pct:26.7},{era:'1990s–00s',count:25,pct:9.8},{era:'2010s',count:7,pct:2.7},{era:'2020s+',count:5,pct:2.0}],
+    notes:'Keene is a high-volume Cheshire County market with 255 closed sales. Median of $345,000 reflects a mid-market price point. Median year built 1963 reflects mid-century housing stock.'
+  },
+  'Swanzey':{
+    county:'cheshire',sales:80,median:'$350,000',medianRaw:350000,avg:'$371,470',dom:14,lts:'100.0%',ppsf:'$306',sqft:879,yearBuilt:1972,beds:3.0,priceMin:'$82,000',priceMax:'$975,000',origToSale:'99.3%',dtc:38,reduction:'25.0%',overask:'30.0%',lotAcres:'1.00 acres',
+    propTypes:{sf:63,mobile:11,condo:6},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[3, 1, 8, 5, 7, 12, 8, 5, 15, 7, 7, 2],median:[375000, 385000, 379000, 151000, 405500, 308000, 412000, 265000, 360000, 400000, 300000, 277450],dom:[33.0, 10.0, 11.5, 12.0, 6.0, 13.5, 22.5, 7.0, 23.0, 9.0, 20.0, 43.0],ppsf:[null, null, 492, 112, 326, 211, null, 2650, 362, 268, null, 341],overask:[66.7, 100.0, 37.5, 60.0, 42.9, 8.3, 12.5, 40.0, 26.7, 42.9, 0.0, 50.0],reduction:[0.0, 0.0, 0.0, 0.0, 0.0, 25.0, 50.0, 20.0, 33.3, 42.9, 28.6, 100.0],dtc:[56, 33, 34, 35, 29, 36, 46, 30, 46, 32, 43, 66]},
+    bands:[{name:'Under $200k',count:10,pct:12.5},{name:'$200k–$299k',count:12,pct:15.0},{name:'$300k–$399k',count:29,pct:36.2},{name:'$400k–$499k',count:14,pct:17.5},{name:'$500k–$599k',count:8,pct:10.0},{name:'$600k+',count:7,pct:8.8}],
+    financing:[{label:'Conventional',pct:62.5,'color':'#1d5fa8'},{label:'Cash',pct:25.0,'color':'#15803d'},{label:'VA',pct:7.5,'color':'#6d28d9'},{label:'FHA',pct:3.8,'color':'#c8941a'},{label:'Other',pct:1.2,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:2,median:263750,pct:2.5},{beds:'2 BR',count:22,median:300000,pct:27.5},{beds:'3 BR',count:43,median:360000,pct:53.8},{beds:'4 BR',count:9,median:500000,pct:11.2},{beds:'5 BR',count:3,median:725000,pct:3.8},{beds:'6 BR',count:1,median:660000,pct:1.2}],
+    decades:[{era:'1800s',count:8,pct:10.0},{era:'Pre-1920',count:5,pct:6.2},{era:'1920s–40s',count:8,pct:10.0},{era:'1950s–60s',count:16,pct:20.0},{era:'1970s–80s',count:19,pct:23.8},{era:'1990s–00s',count:13,pct:16.2},{era:'2010s',count:6,pct:7.5},{era:'2020s+',count:5,pct:6.2}],
+    notes:'Swanzey is a mid-size Cheshire County market with 80 closed sales. Median of $350,000 reflects a mid-market price point. Median year built 1972 reflects mid-century housing stock.'
+  },
+  'Jaffrey':{
+    county:'cheshire',sales:74,median:'$400,000',medianRaw:400000,avg:'$504,585',dom:16,lts:'100.0%',ppsf:'$105',sqft:924,yearBuilt:1983,beds:3.0,priceMin:'$40,000',priceMax:'$4,275,000',origToSale:'98.3%',dtc:38,reduction:'27.0%',overask:'40.5%',lotAcres:'1.27 acres',
+    propTypes:{sf:54,mobile:11,condo:9},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[3, 5, 4, 4, 5, 7, 10, 7, 7, 9, 8, 5],median:[400000, 385000, 373750, 415000, 340000, 365000, 520000, 395000, 408000, 459000, 393500, 300000],dom:[14.0, 84.0, 6.0, 74.5, 9.0, 8.0, 20.0, 21.0, 13.0, 100.0, 27.5, 64.0],ppsf:[null, null, 310, null, 249, 78, null, null, 107, 86, 103, 103],overask:[66.7, 20.0, 25.0, 75.0, 40.0, 28.6, 50.0, 42.9, 57.1, 33.3, 37.5, 20.0],reduction:[0.0, 40.0, 0.0, 25.0, 0.0, 14.3, 30.0, 28.6, 42.9, 44.4, 37.5, 20.0],dtc:[37, 107, 29, 98, 32, 31, 43, 44, 36, 123, 50, 87]},
+    bands:[{name:'Under $200k',count:12,pct:16.2},{name:'$200k–$299k',count:2,pct:2.7},{name:'$300k–$399k',count:21,pct:28.4},{name:'$400k–$499k',count:17,pct:23.0},{name:'$500k–$599k',count:8,pct:10.8},{name:'$600k+',count:14,pct:18.9}],
+    financing:[{label:'Conventional',pct:48.6,'color':'#1d5fa8'},{label:'Cash',pct:25.7,'color':'#15803d'},{label:'FHA',pct:10.8,'color':'#c8941a'},{label:'VA',pct:8.1,'color':'#6d28d9'},{label:'Other',pct:6.8,'color':'#8896aa'}],
+    bedrooms:[{beds:'2 BR',count:21,median:243000,pct:28.4},{beds:'3 BR',count:33,median:420000,pct:44.6},{beds:'4 BR',count:12,median:518500,pct:16.2},{beds:'5 BR',count:4,median:497500,pct:5.4},{beds:'6 BR',count:3,median:825000,pct:4.1},{beds:'7 BR',count:1,median:2600000,pct:1.4}],
+    decades:[{era:'Pre-1800',count:3,pct:4.1},{era:'1800s',count:4,pct:5.4},{era:'Pre-1920',count:4,pct:5.4},{era:'1920s–40s',count:4,pct:5.4},{era:'1950s–60s',count:9,pct:12.2},{era:'1970s–80s',count:26,pct:35.1},{era:'1990s–00s',count:9,pct:12.2},{era:'2010s',count:4,pct:5.4},{era:'2020s+',count:11,pct:14.9}],
+    notes:'Jaffrey is a mid-size Cheshire County market with 74 closed sales. Median of $400,000 reflects a mid-market price point. Median year built 1983 reflects mid-century housing stock. Median lot of 1.27 acres reflects rural character.'
+  },
+  'Rindge':{
+    county:'cheshire',sales:74,median:'$440,000',medianRaw:440000,avg:'$506,917',dom:14,lts:'100.0%',ppsf:'$406',sqft:814,yearBuilt:1988,beds:3.0,priceMin:'$70,000',priceMax:'$1,690,000',origToSale:'100.0%',dtc:36,reduction:'25.7%',overask:'45.9%',lotAcres:'2.03 acres',
+    propTypes:{sf:58,condo:11,mobile:5},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[2, 2, 4, 6, 4, 6, 10, 11, 7, 8, 7, 7],median:[624750, 721463, 493247, 482500, 412500, 510000, 377500, 425000, 581000, 437500, 450000, 399000],dom:[66.5, 1.0, 15.0, 14.0, 9.0, 9.5, 20.5, 16.0, 23.0, 15.0, 13.0, 37.0],ppsf:[406, null, 625, 430, null, 86, 437, 377, null, null, null, 408],overask:[0.0, 50.0, 100.0, 33.3, 75.0, 33.3, 40.0, 72.7, 42.9, 37.5, 42.9, 14.3],reduction:[50.0, 0.0, 25.0, 16.7, 0.0, 0.0, 10.0, 45.5, 28.6, 25.0, 28.6, 57.1],dtc:[90, 24, 38, 37, 32, 32, 44, 39, 46, 38, 36, 60]},
+    bands:[{name:'Under $200k',count:6,pct:8.1},{name:'$200k–$299k',count:6,pct:8.1},{name:'$300k–$399k',count:17,pct:23.0},{name:'$400k–$499k',count:17,pct:23.0},{name:'$500k–$599k',count:10,pct:13.5},{name:'$600k+',count:18,pct:24.3}],
+    financing:[{label:'Conventional',pct:47.3,'color':'#1d5fa8'},{label:'Cash',pct:29.7,'color':'#15803d'},{label:'VA',pct:12.2,'color':'#6d28d9'},{label:'FHA',pct:8.1,'color':'#c8941a'},{label:'Other',pct:2.7,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:3,median:260000,pct:4.1},{beds:'2 BR',count:17,median:425000,pct:23.0},{beds:'3 BR',count:40,median:440000,pct:54.1},{beds:'4 BR',count:13,median:825000,pct:17.6},{beds:'5 BR',count:1,median:715000,pct:1.4}],
+    decades:[{era:'Pre-1800',count:2,pct:2.8},{era:'Pre-1920',count:1,pct:1.4},{era:'1920s–40s',count:6,pct:8.3},{era:'1950s–60s',count:3,pct:4.2},{era:'1970s–80s',count:28,pct:38.9},{era:'1990s–00s',count:20,pct:27.8},{era:'2010s',count:2,pct:2.8},{era:'2020s+',count:10,pct:13.9}],
+    notes:'Rindge is a mid-size Cheshire County market with 74 closed sales. Median of $440,000 reflects a mid-market price point. Median year built 1988 reflects mid-century housing stock. Median lot of 2.03 acres reflects rural character.'
+  },
+  'Hinsdale':{
+    county:'cheshire',sales:58,median:'$277,500',medianRaw:277500,avg:'$264,572',dom:13,lts:'100.0%',ppsf:'$207',sqft:924,yearBuilt:1970,beds:3.0,priceMin:'$23,000',priceMax:'$670,000',origToSale:'100.0%',dtc:36,reduction:'31.0%',overask:'39.7%',lotAcres:'0.60 acres',
+    propTypes:{sf:45,mobile:13},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25"],sales:[2, 6, 4, 7, 8, 7, 7, 1, 7, 4, 5],median:[241750, 280000, 242000, 365000, 197500, 190000, 326000, 320000, 290000, 277500, 285000],dom:[47.0, 16.5, 37.5, 7.0, 11.0, 34.0, 13.0, 23.0, 10.0, 131.0, 9.0],ppsf:[null, 281, 266, null, 185, 163, 167, null, 123, null, 312],overask:[50.0, 50.0, 50.0, 71.4, 50.0, 28.6, 14.3, 0.0, 42.9, 0.0, 40.0],reduction:[50.0, 33.3, 25.0, 0.0, 25.0, 42.9, 28.6, 100.0, 42.9, 50.0, 20.0],dtc:[70, 40, 60, 30, 34, 57, 36, 46, 33, 154, 32]},
+    bands:[{name:'Under $200k',count:18,pct:31.0},{name:'$200k–$299k',count:18,pct:31.0},{name:'$300k–$399k',count:18,pct:31.0},{name:'$400k–$499k',count:2,pct:3.4},{name:'$600k+',count:2,pct:3.4}],
+    financing:[{label:'Conventional',pct:44.8,'color':'#1d5fa8'},{label:'Cash',pct:32.8,'color':'#15803d'},{label:'FHA',pct:13.8,'color':'#c8941a'},{label:'VA',pct:8.6,'color':'#6d28d9'}],
+    bedrooms:[{beds:'2 BR',count:12,median:197500,pct:20.7},{beds:'3 BR',count:36,median:287500,pct:62.1},{beds:'4 BR',count:8,median:348500,pct:13.8},{beds:'5 BR',count:2,median:117500,pct:3.4}],
+    decades:[{era:'1800s',count:10,pct:17.2},{era:'1920s–40s',count:4,pct:6.9},{era:'1950s–60s',count:15,pct:25.9},{era:'1970s–80s',count:12,pct:20.7},{era:'1990s–00s',count:12,pct:20.7},{era:'2020s+',count:5,pct:8.6}],
+    notes:'Hinsdale is a mid-size Cheshire County market with 58 closed sales. Median of $277,500 positions this as an entry-level market. Median year built 1970 reflects mid-century housing stock.'
+  },
+  'Winchester':{
+    county:'cheshire',sales:53,median:'$280,000',medianRaw:280000,avg:'$300,500',dom:13,lts:'97.3%',ppsf:'$232',sqft:883,yearBuilt:1970,beds:3.0,priceMin:'$65,000',priceMax:'$849,000',origToSale:'95.3%',dtc:36,reduction:'26.4%',overask:'26.4%',lotAcres:'1.00 acres',
+    propTypes:{sf:44,mobile:9},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[5, 3, 4, 3, 3, 2, 9, 4, 6, 5, 5, 4],median:[289900, 272000, 264000, 263000, 90000, 422450, 308000, 280000, 323000, 249500, 175000, 515000],dom:[16.0, 5.0, 16.0, 7.0, 28.0, 33.0, 12.0, 28.0, 5.5, 13.0, 17.0, 29.0],ppsf:[193, 338, 177, 379, 80, null, 403, 476, 257, 141, 137, null],overask:[60.0, 0.0, 25.0, 66.7, 33.3, 0.0, 33.3, 25.0, 33.3, 0.0, 20.0, 0.0],reduction:[20.0, 33.3, 25.0, 0.0, 33.3, 0.0, 33.3, 0.0, 33.3, 20.0, 40.0, 50.0],dtc:[39, 28, 39, 30, 51, 56, 35, 51, 28, 36, 40, 52]},
+    bands:[{name:'Under $200k',count:14,pct:26.4},{name:'$200k–$299k',count:15,pct:28.3},{name:'$300k–$399k',count:14,pct:26.4},{name:'$400k–$499k',count:4,pct:7.5},{name:'$500k–$599k',count:2,pct:3.8},{name:'$600k+',count:4,pct:7.5}],
+    financing:[{label:'Cash',pct:41.5,'color':'#15803d'},{label:'Conventional',pct:35.8,'color':'#1d5fa8'},{label:'FHA',pct:17.0,'color':'#c8941a'},{label:'VA',pct:5.7,'color':'#6d28d9'}],
+    bedrooms:[{beds:'1 BR',count:2,median:220000,pct:3.8},{beds:'2 BR',count:14,median:257250,pct:26.4},{beds:'3 BR',count:26,median:261000,pct:49.1},{beds:'4 BR',count:10,median:304500,pct:18.9},{beds:'6 BR',count:1,median:700000,pct:1.9}],
+    decades:[{era:'Pre-1800',count:3,pct:5.7},{era:'1800s',count:10,pct:18.9},{era:'Pre-1920',count:3,pct:5.7},{era:'1920s–40s',count:5,pct:9.4},{era:'1950s–60s',count:5,pct:9.4},{era:'1970s–80s',count:12,pct:22.6},{era:'1990s–00s',count:10,pct:18.9},{era:'2020s+',count:5,pct:9.4}],
+    notes:'Winchester is a mid-size Cheshire County market with 53 closed sales. Median of $280,000 positions this as an entry-level market. Cash buyers at 42% signals investor or vacation-home demand. FHA at 17% indicates active first-time buyer presence. Median year built 1970 reflects mid-century housing stock.'
+  },
+  'Fitzwilliam':{
+    county:'cheshire',sales:51,median:'$360,000',medianRaw:360000,avg:'$396,656',dom:15,lts:'100.0%',ppsf:'$258',sqft:772,yearBuilt:1981,beds:3.0,priceMin:'$16,000',priceMax:'$1,100,000',origToSale:'98.7%',dtc:38,reduction:'23.5%',overask:'29.4%',lotAcres:'2.49 acres',
+    propTypes:{sf:40,mobile:8,condo:3},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25"],sales:[3, 3, 3, 2, 7, 5, 5, 10, 6, 4, 3],median:[419900, 295000, 547000, 189000, 442250, 335000, 549000, 342500, 334000, 352500, 525000],dom:[34.0, 0.0, 25.0, 18.5, 14.0, 19.0, 33.0, 16.0, 17.0, 17.5, 7.0],ppsf:[null, 260, 227, 380, null, 189, 79, 329, 337, 174, null],overask:[33.3, 33.3, 33.3, 50.0, 14.3, 0.0, 20.0, 40.0, 33.3, 25.0, 66.7],reduction:[0.0, 33.3, 33.3, 0.0, 28.6, 20.0, 40.0, 10.0, 50.0, 25.0, 0.0],dtc:[57, 23, 48, 42, 37, 42, 56, 39, 40, 40, 30]},
+    bands:[{name:'Under $200k',count:8,pct:15.7},{name:'$200k–$299k',count:7,pct:13.7},{name:'$300k–$399k',count:13,pct:25.5},{name:'$400k–$499k',count:7,pct:13.7},{name:'$500k–$599k',count:10,pct:19.6},{name:'$600k+',count:6,pct:11.8}],
+    financing:[{label:'Conventional',pct:47.1,'color':'#1d5fa8'},{label:'Cash',pct:37.3,'color':'#15803d'},{label:'FHA',pct:7.8,'color':'#c8941a'},{label:'VA',pct:3.9,'color':'#6d28d9'},{label:'Other',pct:3.9,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:6,median:178550,pct:11.8},{beds:'2 BR',count:16,median:301500,pct:31.4},{beds:'3 BR',count:17,median:419900,pct:33.3},{beds:'4 BR',count:8,median:534500,pct:15.7},{beds:'5 BR',count:4,median:531000,pct:7.8}],
+    decades:[{era:'Pre-1800',count:2,pct:3.9},{era:'1800s',count:5,pct:9.8},{era:'Pre-1920',count:3,pct:5.9},{era:'1920s–40s',count:3,pct:5.9},{era:'1950s–60s',count:7,pct:13.7},{era:'1970s–80s',count:14,pct:27.5},{era:'1990s–00s',count:11,pct:21.6},{era:'2010s',count:2,pct:3.9},{era:'2020s+',count:4,pct:7.8}],
+    notes:'Fitzwilliam is a mid-size Cheshire County market with 51 closed sales. Median of $360,000 reflects a mid-market price point. Median year built 1981 reflects mid-century housing stock. Median lot of 2.49 acres reflects rural character.'
+  },
+  'Walpole':{
+    county:'cheshire',sales:42,median:'$399,500',medianRaw:399500,avg:'$460,986',dom:9,lts:'100.0%',ppsf:'$276',sqft:756,yearBuilt:1969,beds:3.0,priceMin:'$122,500',priceMax:'$1,560,000',origToSale:'99.7%',dtc:32,reduction:'26.2%',overask:'35.7%',lotAcres:'1.34 acres',
+    propTypes:{sf:41,mobile:1},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[1, 1, 2, 2, 8, 2, 5, 2, 5, 7, 5, 2],median:[266000, 374900, 296250, 318500, 500000, 437000, 400000, 446750, 600000, 399000, 392000, 445750],dom:[6.0, 138.0, 9.0, 130.5, 7.5, 86.5, 5.0, 33.0, 9.0, 29.0, 10.0, 27.0],ppsf:[null, null, 222, null, null, null, 330, null, null, null, null, null],overask:[100.0, 0.0, 50.0, 50.0, 50.0, 50.0, 40.0, 50.0, 40.0, 14.3, 20.0, 0.0],reduction:[0.0, 0.0, 0.0, 50.0, 0.0, 50.0, 20.0, 50.0, 40.0, 42.9, 20.0, 50.0],dtc:[29, 161, 32, 154, 30, 110, 28, 56, 32, 52, 33, 50]},
+    bands:[{name:'Under $200k',count:1,pct:2.4},{name:'$200k–$299k',count:7,pct:16.7},{name:'$300k–$399k',count:13,pct:31.0},{name:'$400k–$499k',count:9,pct:21.4},{name:'$500k–$599k',count:3,pct:7.1},{name:'$600k+',count:9,pct:21.4}],
+    financing:[{label:'Cash',pct:45.2,'color':'#15803d'},{label:'Conventional',pct:35.7,'color':'#1d5fa8'},{label:'FHA',pct:9.5,'color':'#c8941a'},{label:'VA',pct:7.1,'color':'#6d28d9'},{label:'Other',pct:2.4,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:1,median:122500,pct:2.4},{beds:'2 BR',count:5,median:380000,pct:11.9},{beds:'3 BR',count:30,median:417500,pct:71.4},{beds:'4 BR',count:5,median:392000,pct:11.9},{beds:'6 BR',count:1,median:1560000,pct:2.4}],
+    decades:[{era:'1800s',count:10,pct:23.8},{era:'1920s–40s',count:4,pct:9.5},{era:'1950s–60s',count:7,pct:16.7},{era:'1970s–80s',count:9,pct:21.4},{era:'1990s–00s',count:11,pct:26.2},{era:'2010s',count:1,pct:2.4}],
+    notes:'Walpole is a mid-size Cheshire County market with 42 closed sales. Median of $399,500 reflects a mid-market price point. Cash buyers at 45% signals investor or vacation-home demand. Median year built 1969 reflects mid-century housing stock. Median lot of 1.34 acres reflects rural character.'
+  },
+  'Chesterfield':{
+    county:'cheshire',sales:39,median:'$470,000',medianRaw:470000,avg:'$632,468',dom:8,lts:'100.0%',ppsf:'$500',sqft:694,yearBuilt:1980,beds:3.0,priceMin:'$212,500',priceMax:'$2,125,000',origToSale:'100.0%',dtc:31,reduction:'23.1%',overask:'43.6%',lotAcres:'2.49 acres',
+    propTypes:{sf:38,condo:1},
+    monthly:{months:["Feb 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[2, 3, 2, 3, 1, 4, 10, 6, 2, 3, 3],median:[474000, 335000, 436750, 514500, 401000, 382500, 475000, 708250, 547500, 350000, 550000],dom:[10.0, 13.0, 6.5, 7.0, 5.0, 5.5, 17.0, 10.5, 6.0, 5.0, 32.0],ppsf:[null, 329, null, null, null, 672, null, null, null, null, null],overask:[50.0, 33.3, 100.0, 33.3, 100.0, 50.0, 40.0, 33.3, 50.0, 66.7, 0.0],reduction:[0.0, 33.3, 0.0, 33.3, 0.0, 0.0, 40.0, 16.7, 0.0, 33.3, 33.3],dtc:[33, 36, 30, 30, 28, 28, 40, 34, 29, 28, 55]},
+    bands:[{name:'$200k–$299k',count:2,pct:5.1},{name:'$300k–$399k',count:8,pct:20.5},{name:'$400k–$499k',count:10,pct:25.6},{name:'$500k–$599k',count:8,pct:20.5},{name:'$600k+',count:11,pct:28.2}],
+    financing:[{label:'Cash',pct:46.2,'color':'#15803d'},{label:'Conventional',pct:38.5,'color':'#1d5fa8'},{label:'VA',pct:10.3,'color':'#6d28d9'},{label:'Other',pct:2.6,'color':'#8896aa'},{label:'FHA',pct:2.6,'color':'#c8941a'}],
+    bedrooms:[{beds:'1 BR',count:1,median:365000,pct:2.6},{beds:'2 BR',count:7,median:400000,pct:17.9},{beds:'3 BR',count:20,median:451750,pct:51.3},{beds:'4 BR',count:9,median:881500,pct:23.1},{beds:'5 BR',count:1,median:1925000,pct:2.6},{beds:'6 BR',count:1,median:401000,pct:2.6}],
+    decades:[{era:'1800s',count:5,pct:12.8},{era:'1920s–40s',count:2,pct:5.1},{era:'1950s–60s',count:7,pct:17.9},{era:'1970s–80s',count:12,pct:30.8},{era:'1990s–00s',count:10,pct:25.6},{era:'2010s',count:1,pct:2.6},{era:'2020s+',count:2,pct:5.1}],
+    notes:'Chesterfield is a smaller Cheshire County community with 39 sales. Median of $470,000 reflects an upper-tier price point for the region. Cash buyers at 46% signals investor or vacation-home demand. Median year built 1980 reflects mid-century housing stock. Median lot of 2.49 acres reflects rural character.'
+  },
+  'Stoddard':{
+    county:'cheshire',sales:31,median:'$425,500',medianRaw:425500,avg:'$528,300',dom:11,lts:'100.0%',ppsf:'$316',sqft:810,yearBuilt:1980,beds:3.0,priceMin:'$87,000',priceMax:'$2,200,000',origToSale:'100.0%',dtc:34,reduction:'29.0%',overask:'38.7%',lotAcres:'1.18 acres',
+    propTypes:{sf:31},
+    monthly:{months:["Mar 25", "Apr 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[3, 2, 6, 5, 2, 4, 2, 4, 1, 2],median:[239900, 429000, 437700, 440000, 715000, 965500, 369500, 380000, 305000, 277500],dom:[4.0, 18.5, 20.5, 7.0, 24.0, 11.0, 10.5, 8.0, 33.0, 51.0],ppsf:[229, null, 563, 440, null, 320, null, 312, null, 375],overask:[0.0, 50.0, 66.7, 40.0, 50.0, 50.0, 50.0, 25.0, 0.0, 0.0],reduction:[33.3, 0.0, 50.0, 20.0, 50.0, 0.0, 0.0, 25.0, 100.0, 50.0],dtc:[27, 42, 44, 30, 47, 34, 34, 31, 56, 74]},
+    bands:[{name:'Under $200k',count:2,pct:6.5},{name:'$200k–$299k',count:6,pct:19.4},{name:'$300k–$399k',count:4,pct:12.9},{name:'$400k–$499k',count:10,pct:32.3},{name:'$500k–$599k',count:1,pct:3.2},{name:'$600k+',count:8,pct:25.8}],
+    financing:[{label:'Conventional',pct:54.8,'color':'#1d5fa8'},{label:'Cash',pct:32.3,'color':'#15803d'},{label:'FHA',pct:6.5,'color':'#c8941a'},{label:'Other',pct:3.2,'color':'#8896aa'},{label:'VA',pct:3.2,'color':'#6d28d9'}],
+    bedrooms:[{beds:'1 BR',count:2,median:151000,pct:6.5},{beds:'2 BR',count:11,median:305000,pct:35.5},{beds:'3 BR',count:15,median:440000,pct:48.4},{beds:'4 BR',count:3,median:1450000,pct:9.7}],
+    decades:[{era:'1800s',count:3,pct:9.7},{era:'Pre-1920',count:1,pct:3.2},{era:'1920s–40s',count:1,pct:3.2},{era:'1950s–60s',count:6,pct:19.4},{era:'1970s–80s',count:5,pct:16.1},{era:'1990s–00s',count:8,pct:25.8},{era:'2010s',count:6,pct:19.4},{era:'2020s+',count:1,pct:3.2}],
+    notes:'Stoddard is a smaller Cheshire County community with 31 sales. Median of $425,500 reflects a mid-market price point. Median year built 1980 reflects mid-century housing stock. Median lot of 1.18 acres reflects rural character.'
+  },
+  'Marlborough':{
+    county:'cheshire',sales:25,median:'$310,000',medianRaw:310000,avg:'$350,740',dom:24,lts:'100.0%',ppsf:'$276',sqft:912,yearBuilt:1956,beds:3.0,priceMin:'$58,000',priceMax:'$765,000',origToSale:'95.9%',dtc:47,reduction:'32.0%',overask:'40.0%',lotAcres:'1.36 acres',
+    propTypes:{sf:22,condo:2,mobile:1},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jul 25", "Aug 25", "Oct 25", "Nov 25", "Dec 25"],sales:[2, 1, 2, 2, 6, 4, 4, 2, 2],median:[432000, 415000, 250750, 282500, 406500, 270000, 289000, 395000, 422500],dom:[129.0, 74.0, 20.5, 105.5, 14.5, 16.0, 16.0, 6.5, 29.5],ppsf:[null, null, 276, 109, 105, 326, 313, null, null],overask:[0.0, 0.0, 50.0, 50.0, 50.0, 50.0, 25.0, 50.0, 50.0],reduction:[100.0, 0.0, 50.0, 50.0, 16.7, 25.0, 50.0, 0.0, 0.0],dtc:[152, 97, 44, 128, 38, 39, 39, 30, 52]},
+    bands:[{name:'Under $200k',count:3,pct:12.0},{name:'$200k–$299k',count:9,pct:36.0},{name:'$300k–$399k',count:5,pct:20.0},{name:'$400k–$499k',count:3,pct:12.0},{name:'$500k–$599k',count:3,pct:12.0},{name:'$600k+',count:2,pct:8.0}],
+    financing:[{label:'Cash',pct:44.0,'color':'#15803d'},{label:'Conventional',pct:40.0,'color':'#1d5fa8'},{label:'FHA',pct:16.0,'color':'#c8941a'}],
+    bedrooms:[{beds:'1 BR',count:1,median:488000,pct:4.0},{beds:'2 BR',count:8,median:250750,pct:32.0},{beds:'3 BR',count:11,median:297000,pct:44.0},{beds:'4 BR',count:3,median:499000,pct:12.0},{beds:'6 BR',count:1,median:505000,pct:4.0},{beds:'7 BR',count:1,median:415000,pct:4.0}],
+    decades:[{era:'Pre-1800',count:3,pct:12.0},{era:'1800s',count:2,pct:8.0},{era:'Pre-1920',count:1,pct:4.0},{era:'1920s–40s',count:5,pct:20.0},{era:'1950s–60s',count:5,pct:20.0},{era:'1970s–80s',count:7,pct:28.0},{era:'1990s–00s',count:2,pct:8.0}],
+    notes:'Marlborough is a smaller Cheshire County community with 25 sales. Median of $310,000 reflects a mid-market price point. Cash buyers at 44% signals investor or vacation-home demand. FHA at 16% indicates active first-time buyer presence. Median year built 1956 creates renovation opportunity built into pricing. Median lot of 1.36 acres reflects rural character.'
+  },
+  'Troy':{
+    county:'cheshire',sales:20,median:'$304,500',medianRaw:304500,avg:'$292,270',dom:8,lts:'100.0%',ppsf:'$155',sqft:934,yearBuilt:1982,beds:3.0,priceMin:'$109,000',priceMax:'$590,000',origToSale:'100.0%',dtc:31,reduction:'20.0%',overask:'40.0%',lotAcres:'1.56 acres',
+    propTypes:{sf:14,mobile:6},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Nov 25", "Dec 25"],sales:[1, 2, 2, 3, 2, 3, 3, 1, 2, 1],median:[425000, 380000, 298500, 155000, 355500, 299000, 201000, 400000, 267500, 372000],dom:[112.0, 39.5, 6.0, 57.0, 4.0, 37.0, 32.0, 5.0, 6.0, 6.0],ppsf:[null, null, null, 118, null, 233, 186, null, null, null],overask:[100.0, 0.0, 100.0, 0.0, 100.0, 0.0, 33.3, 100.0, 50.0, 0.0],reduction:[100.0, 0.0, 50.0, 0.0, 0.0, 66.7, 0.0, 0.0, 0.0, 0.0],dtc:[135, 62, 29, 80, 27, 60, 55, 28, 29, 29]},
+    bands:[{name:'Under $200k',count:6,pct:30.0},{name:'$200k–$299k',count:4,pct:20.0},{name:'$300k–$399k',count:6,pct:30.0},{name:'$400k–$499k',count:2,pct:10.0},{name:'$500k–$599k',count:2,pct:10.0}],
+    financing:[{label:'Conventional',pct:60.0,'color':'#1d5fa8'},{label:'Cash',pct:35.0,'color':'#15803d'},{label:'FHA',pct:5.0,'color':'#c8941a'}],
+    bedrooms:[{beds:'2 BR',count:5,median:225000,pct:25.0},{beds:'3 BR',count:10,median:206500,pct:50.0},{beds:'4 BR',count:5,median:385000,pct:25.0}],
+    decades:[{era:'1800s',count:4,pct:20.0},{era:'Pre-1920',count:2,pct:10.0},{era:'1920s–40s',count:2,pct:10.0},{era:'1950s–60s',count:1,pct:5.0},{era:'1970s–80s',count:1,pct:5.0},{era:'1990s–00s',count:3,pct:15.0},{era:'2010s',count:1,pct:5.0},{era:'2020s+',count:6,pct:30.0}],
+    notes:'Troy is a smaller Cheshire County community with 20 sales. Median of $304,500 reflects a mid-market price point. Median year built 1982 reflects mid-century housing stock. Median lot of 1.56 acres reflects rural character.'
+  },
+  'Dublin':{
+    county:'cheshire',sales:20,median:'$576,500',medianRaw:576500,avg:'$632,025',dom:12,lts:'100.0%',ppsf:'$421',sqft:832,yearBuilt:1961,beds:3.0,priceMin:'$295,000',priceMax:'$1,775,000',origToSale:'99.0%',dtc:35,reduction:'35.0%',overask:'30.0%',lotAcres:'4.95 acres',
+    propTypes:{sf:20},
+    monthly:{months:["Feb 25", "Mar 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[1, 1, 6, 2, 1, 2, 1, 1, 3, 2],median:[429000, 689000, 697750, 682500, 295000, 502000, 418000, 975000, 475000, 480000],dom:[19.0, 7.0, 6.0, 16.0, 7.0, 4.5, 31.0, 100.0, 41.0, 46.5],ppsf:[null, null, 454, null, 387, null, null, null, null, null],overask:[0.0, 0.0, 33.3, 0.0, 0.0, 50.0, 100.0, 0.0, 66.7, 0.0],reduction:[0.0, 0.0, 33.3, 50.0, 0.0, 0.0, 100.0, 100.0, 33.3, 50.0],dtc:[42, 30, 29, 39, 30, 28, 54, 123, 64, 70]},
+    bands:[{name:'$200k–$299k',count:1,pct:5.0},{name:'$300k–$399k',count:2,pct:10.0},{name:'$400k–$499k',count:6,pct:30.0},{name:'$500k–$599k',count:3,pct:15.0},{name:'$600k+',count:8,pct:40.0}],
+    financing:[{label:'Cash',pct:50.0,'color':'#15803d'},{label:'Conventional',pct:45.0,'color':'#1d5fa8'},{label:'FHA',pct:5.0,'color':'#c8941a'}],
+    bedrooms:[{beds:'1 BR',count:1,median:295000,pct:5.0},{beds:'2 BR',count:2,median:419500,pct:10.0},{beds:'3 BR',count:10,median:531500,pct:50.0},{beds:'4 BR',count:6,median:630000,pct:30.0},{beds:'8 BR',count:1,median:1775000,pct:5.0}],
+    decades:[{era:'Pre-1800',count:1,pct:5.0},{era:'1800s',count:2,pct:10.0},{era:'Pre-1920',count:2,pct:10.0},{era:'1920s–40s',count:1,pct:5.0},{era:'1950s–60s',count:6,pct:30.0},{era:'1970s–80s',count:3,pct:15.0},{era:'1990s–00s',count:3,pct:15.0},{era:'2010s',count:1,pct:5.0},{era:'2020s+',count:1,pct:5.0}],
+    notes:'Dublin is a smaller Cheshire County community with 20 sales. Median of $576,500 reflects an upper-tier price point for the region. Cash buyers at 50% signals investor or vacation-home demand. Median year built 1961 reflects mid-century housing stock. Median lot of 4.95 acres reflects rural character.'
+  },
+  'Alstead':{
+    county:'cheshire',sales:18,median:'$296,798',medianRaw:296798,avg:'$366,433',dom:18,lts:'98.3%',ppsf:'$305',sqft:896,yearBuilt:1977,beds:3.0,priceMin:'$55,000',priceMax:'$825,000',origToSale:'98.2%',dtc:41,reduction:'16.7%',overask:'22.2%',lotAcres:'1.70 acres',
+    propTypes:{sf:16,mobile:2},
+    monthly:{months:["Apr 25", "May 25", "Jun 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Jan 26"],sales:[1, 1, 1, 2, 4, 4, 2, 3],median:[305000, 306000, 55000, 584000, 254500, 339000, 225000, 575000],dom:[39.0, 7.0, 25.0, 7.0, 9.0, 39.5, 97.0, 42.0],ppsf:[null, null, 61, 364, 332, null, 278, null],overask:[0.0, 100.0, 0.0, 0.0, 75.0, 0.0, 0.0, 0.0],reduction:[100.0, 0.0, 0.0, 0.0, 0.0, 50.0, 0.0, 0.0],dtc:[62, 30, 48, 30, 32, 62, 120, 65]},
+    bands:[{name:'Under $200k',count:3,pct:16.7},{name:'$200k–$299k',count:6,pct:33.3},{name:'$300k–$399k',count:4,pct:22.2},{name:'$400k–$499k',count:1,pct:5.6},{name:'$500k–$599k',count:1,pct:5.6},{name:'$600k+',count:3,pct:16.7}],
+    financing:[{label:'Conventional',pct:44.4,'color':'#1d5fa8'},{label:'Cash',pct:27.8,'color':'#15803d'},{label:'FHA',pct:16.7,'color':'#c8941a'},{label:'Other',pct:5.6,'color':'#8896aa'},{label:'VA',pct:5.6,'color':'#6d28d9'}],
+    bedrooms:[{beds:'2 BR',count:5,median:287000,pct:27.8},{beds:'3 BR',count:9,median:288597,pct:50.0},{beds:'4 BR',count:3,median:305000,pct:16.7},{beds:'5 BR',count:1,median:825000,pct:5.6}],
+    decades:[{era:'1800s',count:2,pct:11.1},{era:'1920s–40s',count:2,pct:11.1},{era:'1950s–60s',count:2,pct:11.1},{era:'1970s–80s',count:5,pct:27.8},{era:'1990s–00s',count:4,pct:22.2},{era:'2010s',count:1,pct:5.6},{era:'2020s+',count:2,pct:11.1}],
+    notes:'Alstead is a smaller Cheshire County community with 18 sales. Median of $296,798 positions this as an entry-level market. FHA at 17% indicates active first-time buyer presence. Median year built 1977 reflects mid-century housing stock. Median lot of 1.70 acres reflects rural character.'
+  },
+  'Westmoreland':{
+    county:'cheshire',sales:17,median:'$460,000',medianRaw:460000,avg:'$511,576',dom:9,lts:'98.5%',ppsf:'$456',sqft:874,yearBuilt:1986,beds:3.0,priceMin:'$175,000',priceMax:'$1,148,794',origToSale:'97.5%',dtc:32,reduction:'29.4%',overask:'11.8%',lotAcres:'7.70 acres',
+    propTypes:{sf:17},
+    monthly:{months:["Feb 25", "Mar 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25"],sales:[1, 1, 1, 3, 2, 3, 2, 1, 3],median:[450000, 175000, 489000, 584000, 627500, 425000, 350000, 525000, 460000],dom:[104.0, 0.0, 5.0, 9.0, 3.0, 3.0, 62.0, 136.0, 12.0],ppsf:[null, null, 599, null, null, null, 313, null, null],overask:[0.0, 0.0, 0.0, 0.0, 50.0, 0.0, 50.0, 0.0, 0.0],reduction:[100.0, 0.0, 0.0, 33.3, 0.0, 0.0, 50.0, 100.0, 33.3],dtc:[127, 23, 28, 32, 26, 26, 85, 159, 35]},
+    bands:[{name:'Under $200k',count:1,pct:5.9},{name:'$200k–$299k',count:1,pct:5.9},{name:'$300k–$399k',count:1,pct:5.9},{name:'$400k–$499k',count:7,pct:41.2},{name:'$500k–$599k',count:3,pct:17.6},{name:'$600k+',count:4,pct:23.5}],
+    financing:[{label:'Cash',pct:47.1,'color':'#15803d'},{label:'Conventional',pct:35.3,'color':'#1d5fa8'},{label:'FHA',pct:5.9,'color':'#c8941a'},{label:'Other',pct:5.9,'color':'#8896aa'},{label:'VA',pct:5.9,'color':'#6d28d9'}],
+    bedrooms:[{beds:'2 BR',count:4,median:424500,pct:23.5},{beds:'3 BR',count:8,median:455000,pct:47.1},{beds:'4 BR',count:4,median:517000,pct:23.5},{beds:'5 BR',count:1,median:675000,pct:5.9}],
+    decades:[{era:'1800s',count:2,pct:11.8},{era:'1920s–40s',count:2,pct:11.8},{era:'1970s–80s',count:7,pct:41.2},{era:'1990s–00s',count:5,pct:29.4},{era:'2010s',count:1,pct:5.9}],
+    notes:'Westmoreland is a smaller Cheshire County community with 17 sales. Median of $460,000 reflects an upper-tier price point for the region. Cash buyers at 47% signals investor or vacation-home demand. Median year built 1986 reflects mid-century housing stock. Median lot of 7.70 acres reflects rural character.'
+  },
+  'Richmond':{
+    county:'cheshire',sales:15,median:'$395,000',medianRaw:395000,avg:'$446,720',dom:45,lts:'100.0%',ppsf:'$350',sqft:858,yearBuilt:1985,beds:3.0,priceMin:'$235,000',priceMax:'$850,000',origToSale:'98.2%',dtc:68,reduction:'40.0%',overask:'46.7%',lotAcres:'5.00 acres',
+    propTypes:{sf:15},
+    monthly:{months:["Feb 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25"],sales:[1, 1, 2, 2, 2, 1, 2, 2, 1, 1],median:[395000, 850000, 539500, 327500, 585000, 375000, 322500, 359625, 340000, 472550],dom:[104.0, 175.0, 108.5, 4.0, 5.0, 64.0, 45.5, 6.5, 45.0, 70.0],ppsf:[null, null, null, 350, null, null, null, null, null, null],overask:[0.0, 100.0, 0.0, 100.0, 100.0, 0.0, 50.0, 50.0, 0.0, 0.0],reduction:[100.0, 100.0, 50.0, 0.0, 0.0, 100.0, 50.0, 0.0, 100.0, 0.0],dtc:[127, 198, 132, 27, 28, 87, 68, 30, 68, 93]},
+    bands:[{name:'$200k–$299k',count:1,pct:6.7},{name:'$300k–$399k',count:7,pct:46.7},{name:'$400k–$499k',count:3,pct:20.0},{name:'$500k–$599k',count:2,pct:13.3},{name:'$600k+',count:2,pct:13.3}],
+    financing:[{label:'Conventional',pct:33.3,'color':'#1d5fa8'},{label:'Cash',pct:26.7,'color':'#15803d'},{label:'FHA',pct:13.3,'color':'#c8941a'},{label:'VA',pct:13.3,'color':'#6d28d9'},{label:'Other',pct:13.3,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:1,median:300000,pct:6.7},{beds:'2 BR',count:3,median:380000,pct:20.0},{beds:'3 BR',count:6,median:441275,pct:40.0},{beds:'4 BR',count:4,median:385000,pct:26.7},{beds:'6 BR',count:1,median:850000,pct:6.7}],
+    decades:[{era:'Pre-1800',count:2,pct:13.3},{era:'1800s',count:1,pct:6.7},{era:'1950s–60s',count:2,pct:13.3},{era:'1970s–80s',count:4,pct:26.7},{era:'1990s–00s',count:4,pct:26.7},{era:'2020s+',count:2,pct:13.3}],
+    notes:'Richmond is a smaller Cheshire County community with 15 sales. Median of $395,000 reflects a mid-market price point. Median year built 1985 reflects mid-century housing stock. Median lot of 5.00 acres reflects rural character.'
+  },
+  'Gilsum':{
+    county:'cheshire',sales:12,median:'$289,200',medianRaw:289200,avg:'$310,275',dom:12,lts:'100.0%',ppsf:'$307',sqft:815,yearBuilt:1969,beds:3.0,priceMin:'$188,000',priceMax:'$540,000',origToSale:'98.2%',dtc:34,reduction:'33.3%',overask:'33.3%',lotAcres:'2.80 acres',
+    propTypes:{sf:11,mobile:1},
+    monthly:{months:["Mar 25", "Apr 25", "May 25", "Jun 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25"],sales:[2, 1, 1, 1, 2, 1, 2, 1, 1],median:[350000, 315000, 263400, 335000, 370000, 237000, 288950, 190000, 365000],dom:[16.0, 3.0, 9.0, 0.0, 11.0, 78.0, 27.5, 3.0, 55.0],ppsf:[307, null, null, null, null, null, null, null, null],overask:[50.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 100.0, 0.0],reduction:[50.0, 0.0, 0.0, 0.0, 0.0, 100.0, 50.0, 0.0, 100.0],dtc:[39, 26, 32, 23, 34, 101, 50, 26, 78]},
+    bands:[{name:'Under $200k',count:2,pct:16.7},{name:'$200k–$299k',count:4,pct:33.3},{name:'$300k–$399k',count:4,pct:33.3},{name:'$400k–$499k',count:1,pct:8.3},{name:'$500k–$599k',count:1,pct:8.3}],
+    financing:[{label:'Conventional',pct:41.7,'color':'#1d5fa8'},{label:'Cash',pct:33.3,'color':'#15803d'},{label:'Other',pct:8.3,'color':'#8896aa'},{label:'FHA',pct:8.3,'color':'#c8941a'},{label:'VA',pct:8.3,'color':'#6d28d9'}],
+    bedrooms:[{beds:'2 BR',count:3,median:250000,pct:25.0},{beds:'3 BR',count:8,median:350000,pct:66.7},{beds:'4 BR',count:1,median:188000,pct:8.3}],
+    decades:[{era:'Pre-1920',count:1,pct:8.3},{era:'1920s–40s',count:2,pct:16.7},{era:'1950s–60s',count:3,pct:25.0},{era:'1970s–80s',count:4,pct:33.3},{era:'1990s–00s',count:1,pct:8.3},{era:'2020s+',count:1,pct:8.3}],
+    notes:'Gilsum is a small rural Cheshire County community with only 12 sales – interpret all metrics with caution at this volume. Median of $289,200 positions this as an entry-level market. Median year built 1969 reflects mid-century housing stock. Median lot of 2.80 acres reflects rural character.'
+  },
+  'Marlow':{
+    county:'cheshire',sales:10,median:'$400,000',medianRaw:400000,avg:'$377,357',dom:10,lts:'100.0%',ppsf:'–',sqft:0,yearBuilt:1957,beds:2.5,priceMin:'$134,000',priceMax:'$574,470',origToSale:'100.0%',dtc:33,reduction:'20.0%',overask:'40.0%',lotAcres:'10.05 acres',
+    propTypes:{sf:9,mobile:1},
+    monthly:{months:["Mar 25", "Jun 25", "Jul 25", "Sep 25", "Oct 25"],sales:[2, 3, 1, 1, 3],median:[349500, 405000, 395000, 574470, 375000],dom:[68.5, 13.0, 5.0, 32.0, 7.0],ppsf:[null, null, null, null, null],overask:[50.0, 33.3, 0.0, 0.0, 66.7],reduction:[50.0, 33.3, 0.0, 0.0, 0.0],dtc:[92, 36, 28, 55, 30]},
+    bands:[{name:'Under $200k',count:1,pct:10.0},{name:'$200k–$299k',count:1,pct:10.0},{name:'$300k–$399k',count:3,pct:30.0},{name:'$400k–$499k',count:4,pct:40.0},{name:'$500k–$599k',count:1,pct:10.0}],
+    financing:[{label:'Conventional',pct:40.0,'color':'#1d5fa8'},{label:'Cash',pct:30.0,'color':'#15803d'},{label:'VA',pct:30.0,'color':'#6d28d9'}],
+    bedrooms:[{beds:'2 BR',count:5,median:375000,pct:50.0},{beds:'3 BR',count:3,median:441100,pct:30.0},{beds:'4 BR',count:2,median:349500,pct:20.0}],
+    decades:[{era:'1800s',count:3,pct:30.0},{era:'Pre-1920',count:1,pct:10.0},{era:'1920s–40s',count:1,pct:10.0},{era:'1970s–80s',count:4,pct:40.0},{era:'1990s–00s',count:1,pct:10.0}],
+    notes:'Marlow is a small rural Cheshire County community with only 10 sales – interpret all metrics with caution at this volume. Median of $400,000 reflects a mid-market price point. Median year built 1957 creates renovation opportunity built into pricing. Median lot of 10.05 acres reflects rural character.'
+  },
+  'Sullivan':{
+    county:'cheshire',sales:10,median:'$265,000',medianRaw:265000,avg:'$286,650',dom:38,lts:'95.5%',ppsf:'$200',sqft:924,yearBuilt:1972,beds:3.0,priceMin:'$85,000',priceMax:'$560,000',origToSale:'90.6%',dtc:61,reduction:'50.0%',overask:'10.0%',lotAcres:'1.60 acres',
+    propTypes:{sf:7,mobile:3},
+    monthly:{months:["Feb 25", "Mar 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Dec 25"],sales:[1, 1, 1, 1, 1, 1, 3, 1],median:[316000, 85000, 280000, 385000, 96500, 185000, 549000, 250000],dom:[100.0, 56.0, 11.0, 7.0, 6.0, 24.0, 52.0, 89.0],ppsf:[null, null, null, null, null, 200, null, null],overask:[0.0, 0.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0],reduction:[100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 66.7, 100.0],dtc:[123, 79, 34, 30, 29, 47, 75, 112]},
+    bands:[{name:'Under $200k',count:4,pct:40.0},{name:'$200k–$299k',count:2,pct:20.0},{name:'$300k–$399k',count:2,pct:20.0},{name:'$500k–$599k',count:2,pct:20.0}],
+    financing:[{label:'Conventional',pct:50.0,'color':'#1d5fa8'},{label:'Cash',pct:40.0,'color':'#15803d'},{label:'FHA',pct:10.0,'color':'#c8941a'}],
+    bedrooms:[{beds:'2 BR',count:4,median:172500,pct:40.0},{beds:'3 BR',count:5,median:316000,pct:50.0},{beds:'4 BR',count:1,median:549000,pct:10.0}],
+    decades:[{era:'1800s',count:2,pct:20.0},{era:'1950s–60s',count:2,pct:20.0},{era:'1970s–80s',count:5,pct:50.0},{era:'2010s',count:1,pct:10.0}],
+    notes:'Sullivan is a small rural Cheshire County community with only 10 sales – interpret all metrics with caution at this volume. Median of $265,000 positions this as an entry-level market. Cash buyers at 40% signals investor or vacation-home demand. Median year built 1972 reflects mid-century housing stock. Median lot of 1.60 acres reflects rural character.'
+  },
+  'Harrisville':{
+    county:'cheshire',sales:8,median:'$480,000',medianRaw:480000,avg:'$520,625',dom:6,lts:'102.4%',ppsf:'–',sqft:0,yearBuilt:1967,beds:2.0,priceMin:'$340,000',priceMax:'$765,000',origToSale:'102.4%',dtc:30,reduction:'0.0%',overask:'62.5%',lotAcres:'2.08 acres',
+    propTypes:{sf:8},
+    monthly:{months:["May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25"],sales:[1, 1, 2, 1, 1, 1, 1],median:[510000, 640000, 387500, 640000, 765000, 385000, 450000],dom:[0.0, 4.0, 7.5, 6.0, 2.0, 56.0, 11.0],ppsf:[null, null, null, null, null, null, null],overask:[0.0, 0.0, 100.0, 100.0, 100.0, 0.0, 100.0],reduction:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],dtc:[23, 27, 30, 29, 25, 79, 34]},
+    bands:[{name:'$300k–$399k',count:2,pct:25.0},{name:'$400k–$499k',count:2,pct:25.0},{name:'$500k–$599k',count:1,pct:12.5},{name:'$600k+',count:3,pct:37.5}],
+    financing:[{label:'Conventional',pct:37.5,'color':'#1d5fa8'},{label:'Cash',pct:37.5,'color':'#15803d'},{label:'FHA',pct:12.5,'color':'#c8941a'},{label:'VA',pct:12.5,'color':'#6d28d9'}],
+    bedrooms:[{beds:'2 BR',count:5,median:435000,pct:62.5},{beds:'3 BR',count:2,median:575000,pct:25.0},{beds:'4 BR',count:1,median:640000,pct:12.5}],
+    decades:[{era:'1950s–60s',count:4,pct:50.0},{era:'1970s–80s',count:3,pct:37.5},{era:'1990s–00s',count:1,pct:12.5}],
+    notes:'Harrisville is a small rural Cheshire County community with only 8 sales – interpret all metrics with caution at this volume. Median of $480,000 reflects an upper-tier price point for the region. Median year built 1967 reflects mid-century housing stock. Median lot of 2.08 acres reflects rural character.'
+  },
+  'Nelson':{
+    county:'cheshire',sales:5,median:'$575,000',medianRaw:575000,avg:'$860,800',dom:68,lts:'97.0%',ppsf:'$1,000',sqft:960,yearBuilt:1994,beds:3.0,priceMin:'$429,000',priceMax:'$1,775,000',origToSale:'85.8%',dtc:91,reduction:'40.0%',overask:'20.0%',lotAcres:'4.50 acres',
+    propTypes:{sf:5},
+    monthly:{months:["Mar 25", "Jul 25", "Sep 25", "Dec 25"],sales:[1, 2, 1, 1],median:[429000, 1175000, 960000, 565000],dom:[68.0, 19.5, 76.0, 86.0],ppsf:[null, null, 1000, null],overask:[0.0, 50.0, 0.0, 0.0],reduction:[0.0, 0.0, 100.0, 100.0],dtc:[91, 42, 99, 109]},
+    bands:[{name:'$400k–$499k',count:1,pct:20.0},{name:'$500k–$599k',count:2,pct:40.0},{name:'$600k+',count:2,pct:40.0}],
+    financing:[{label:'Conventional',pct:60.0,'color':'#1d5fa8'},{label:'Cash',pct:40.0,'color':'#15803d'}],
+    bedrooms:[{beds:'3 BR',count:3,median:575000,pct:60.0},{beds:'6 BR',count:2,median:1170000,pct:40.0}],
+    decades:[{era:'1970s–80s',count:2,pct:40.0},{era:'1990s–00s',count:3,pct:60.0}],
+    notes:'Nelson is a small rural Cheshire County community with only 5 sales – interpret all metrics with caution at this volume. Median of $575,000 reflects an upper-tier price point for the region. Cash buyers at 40% signals investor or vacation-home demand. Median year built 1994 indicates newer construction. Median lot of 4.50 acres reflects rural character.'
+  },
+  'Surry':{
+    county:'cheshire',sales:4,median:'$505,000',medianRaw:505000,avg:'$553,750',dom:10,lts:'97.8%',ppsf:'–',sqft:0,yearBuilt:1987,beds:3.0,priceMin:'$430,000',priceMax:'$775,000',origToSale:'97.8%',dtc:34,reduction:'0.0%',overask:'50.0%',lotAcres:'3.30 acres',
+    propTypes:{sf:4},
+    monthly:{months:["Sep 25", "Oct 25"],sales:[2, 2],median:[505000, 602500],dom:[10.5, 32.0],ppsf:[null, null],overask:[100.0, 0.0],reduction:[0.0, 0.0],dtc:[34, 55]},
+    bands:[{name:'$400k–$499k',count:2,pct:50.0},{name:'$500k–$599k',count:1,pct:25.0},{name:'$600k+',count:1,pct:25.0}],
+    financing:[{label:'Conventional',pct:50.0,'color':'#1d5fa8'},{label:'VA',pct:25.0,'color':'#6d28d9'},{label:'Cash',pct:25.0,'color':'#15803d'}],
+    bedrooms:[{beds:'2 BR',count:1,median:450000,pct:25.0},{beds:'3 BR',count:2,median:495000,pct:50.0},{beds:'5 BR',count:1,median:775000,pct:25.0}],
+    decades:[{era:'Pre-1800',count:1,pct:25.0},{era:'1970s–80s',count:2,pct:50.0},{era:'1990s–00s',count:1,pct:25.0}],
+    notes:'Surry is a small rural Cheshire County community with only 4 sales – interpret all metrics with caution at this volume. Median of $505,000 reflects an upper-tier price point for the region. Median year built 1987 reflects mid-century housing stock. Median lot of 3.30 acres reflects rural character.'
+  },
+  'Roxbury':{
+    county:'cheshire',sales:2,median:'$407,850',medianRaw:407850,avg:'$407,850',dom:26,lts:'103.0%',ppsf:'–',sqft:0,yearBuilt:1926,beds:2.5,priceMin:'$260,000',priceMax:'$555,700',origToSale:'95.7%',dtc:50,reduction:'50.0%',overask:'50.0%',lotAcres:'4.87 acres',
+    propTypes:{sf:2},
+    monthly:{months:["Apr 25", "Dec 25"],sales:[1, 1],median:[555700, 260000],dom:[7.0, 46.0],ppsf:[null, null],overask:[100.0, 0.0],reduction:[0.0, 100.0],dtc:[30, 69]},
+    bands:[{name:'$200k–$299k',count:1,pct:50.0},{name:'$500k–$599k',count:1,pct:50.0}],
+    financing:[{label:'FHA',pct:50.0,'color':'#c8941a'},{label:'Conventional',pct:50.0,'color':'#1d5fa8'}],
+    bedrooms:[{beds:'2 BR',count:1,median:260000,pct:50.0},{beds:'3 BR',count:1,median:555700,pct:50.0}],
+    decades:[{era:'Pre-1920',count:1,pct:50.0},{era:'1950s–60s',count:1,pct:50.0}],
+    notes:'Roxbury is a small rural Cheshire County community with only 2 sales – interpret all metrics with caution at this volume. Median of $407,850 reflects a mid-market price point. FHA at 50% indicates active first-time buyer presence. Median year built 1926 creates renovation opportunity built into pricing. Median lot of 4.87 acres reflects rural character.'
+  },
+  'Claremont':{
+    county:'sullivan',sales:142,median:'$258,500',medianRaw:258500,avg:'$263,484',dom:16,lts:'98.8%',ppsf:'$200',sqft:918,yearBuilt:1946,beds:3.0,priceMin:'$20,000',priceMax:'$950,000',origToSale:'97.8%',dtc:38,reduction:'27.5%',overask:'25.4%',lotAcres:'0.36 acres',
+    propTypes:{sf:116,mobile:21,condo:5},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[7, 10, 9, 8, 13, 12, 14, 17, 15, 8, 15, 14],median:[312000, 221000, 268000, 247750, 277500, 252950, 200000, 290000, 258000, 252500, 240000, 312500],dom:[5.0, 46.0, 41.0, 8.0, 7.0, 23.5, 11.0, 10.0, 22.0, 33.0, 11.0, 37.5],ppsf:[153, 198, 222, 224, 319, 154, 85, 242, 85, 199, 170, 258],overask:[42.9, 20.0, 22.2, 50.0, 46.2, 16.7, 21.4, 29.4, 20.0, 0.0, 26.7, 14.3],reduction:[28.6, 30.0, 55.6, 0.0, 15.4, 33.3, 14.3, 29.4, 26.7, 37.5, 20.0, 42.9],dtc:[28, 69, 64, 31, 30, 46, 34, 33, 45, 56, 34, 60]},
+    bands:[{name:'Under $200k',count:39,pct:27.5},{name:'$200k–$299k',count:48,pct:33.8},{name:'$300k–$399k',count:44,pct:31.0},{name:'$400k–$499k',count:7,pct:4.9},{name:'$500k–$599k',count:2,pct:1.4},{name:'$600k+',count:2,pct:1.4}],
+    financing:[{label:'Conventional',pct:35.9,'color':'#1d5fa8'},{label:'Cash',pct:31.7,'color':'#15803d'},{label:'FHA',pct:19.0,'color':'#c8941a'},{label:'VA',pct:9.2,'color':'#6d28d9'},{label:'Other',pct:4.2,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:6,median:128500,pct:4.2},{beds:'2 BR',count:33,median:185000,pct:23.2},{beds:'3 BR',count:75,median:277500,pct:52.8},{beds:'4 BR',count:26,median:335000,pct:18.3},{beds:'5 BR',count:1,median:525000,pct:0.7},{beds:'7 BR',count:1,median:250000,pct:0.7}],
+    decades:[{era:'Pre-1800',count:1,pct:0.7},{era:'1800s',count:16,pct:11.3},{era:'Pre-1920',count:11,pct:7.7},{era:'1920s–40s',count:52,pct:36.6},{era:'1950s–60s',count:24,pct:16.9},{era:'1970s–80s',count:24,pct:16.9},{era:'1990s–00s',count:12,pct:8.5},{era:'2010s',count:2,pct:1.4}],
+    notes:'Claremont is a high-volume Sullivan County market with 142 closed sales. Median of $258,500 positions this as an entry-level market. FHA at 19% indicates active first-time buyer presence. Median year built 1946 creates renovation opportunity built into pricing.'
+  },
+  'Grantham':{
+    county:'sullivan',sales:87,median:'$500,000',medianRaw:500000,avg:'$564,197',dom:17,lts:'98.7%',ppsf:'$368',sqft:922,yearBuilt:1986,beds:3.0,priceMin:'$160,000',priceMax:'$1,500,000',origToSale:'95.5%',dtc:40,reduction:'39.1%',overask:'20.7%',lotAcres:'1.12 acres',
+    propTypes:{sf:66,condo:21},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[8, 3, 6, 10, 6, 9, 10, 6, 9, 9, 8, 3],median:[465500, 425000, 480000, 467500, 637514, 499000, 454500, 760000, 477000, 500000, 571500, 550000],dom:[202.5, 5.0, 9.5, 14.5, 9.5, 6.0, 18.5, 15.0, 37.0, 39.0, 39.0, 16.0],ppsf:[null, null, null, 368, null, 315, 382, null, null, null, null, null],overask:[12.5, 66.7, 66.7, 0.0, 33.3, 22.2, 30.0, 33.3, 11.1, 11.1, 0.0, 0.0],reduction:[87.5, 33.3, 16.7, 30.0, 33.3, 11.1, 40.0, 33.3, 55.6, 44.4, 50.0, 0.0],dtc:[226, 28, 32, 38, 32, 29, 42, 38, 60, 62, 62, 39]},
+    bands:[{name:'Under $200k',count:1,pct:1.1},{name:'$200k–$299k',count:3,pct:3.4},{name:'$300k–$399k',count:11,pct:12.6},{name:'$400k–$499k',count:27,pct:31.0},{name:'$500k–$599k',count:16,pct:18.4},{name:'$600k+',count:29,pct:33.3}],
+    financing:[{label:'Conventional',pct:64.4,'color':'#1d5fa8'},{label:'Cash',pct:31.0,'color':'#15803d'},{label:'VA',pct:4.6,'color':'#6d28d9'}],
+    bedrooms:[{beds:'1 BR',count:1,median:290000,pct:1.1},{beds:'2 BR',count:9,median:400000,pct:10.3},{beds:'3 BR',count:60,median:499500,pct:69.0},{beds:'4 BR',count:14,median:717000,pct:16.1},{beds:'5 BR',count:3,median:699999,pct:3.4}],
+    decades:[{era:'1800s',count:1,pct:1.1},{era:'1920s–40s',count:1,pct:1.1},{era:'1970s–80s',count:53,pct:60.9},{era:'1990s–00s',count:30,pct:34.5},{era:'2010s',count:2,pct:2.3}],
+    notes:'Grantham is a mid-size Sullivan County market with 87 closed sales. Median of $500,000 reflects an upper-tier price point for the region. Median year built 1986 reflects mid-century housing stock. Median lot of 1.12 acres reflects rural character.'
+  },
+  'Newport':{
+    county:'sullivan',sales:88,median:'$312,500',medianRaw:312500,avg:'$376,632',dom:14,lts:'100.0%',ppsf:'$187',sqft:795,yearBuilt:1970,beds:3.0,priceMin:'$50,000',priceMax:'$2,730,000',origToSale:'100.0%',dtc:36,reduction:'31.8%',overask:'34.1%',lotAcres:'0.75 acres',
+    propTypes:{sf:72,mobile:13,condo:3},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[12, 7, 8, 7, 7, 8, 5, 6, 10, 6, 8, 4],median:[276000, 320000, 362500, 280000, 341000, 297450, 439900, 342500, 300000, 254000, 410000, 240000],dom:[9.0, 24.0, 14.0, 38.0, 8.0, 12.0, 10.0, 10.0, 42.0, 15.0, 30.0, 111.5],ppsf:[356, 247, 241, 139, null, 219, 95, 316, 96, 185, null, 93],overask:[25.0, 28.6, 25.0, 57.1, 57.1, 37.5, 40.0, 33.3, 20.0, 33.3, 25.0, 50.0],reduction:[16.7, 42.9, 12.5, 42.9, 0.0, 12.5, 40.0, 33.3, 60.0, 16.7, 37.5, 100.0],dtc:[32, 47, 37, 61, 31, 35, 33, 33, 65, 38, 53, 134]},
+    bands:[{name:'Under $200k',count:18,pct:20.5},{name:'$200k–$299k',count:21,pct:23.9},{name:'$300k–$399k',count:23,pct:26.1},{name:'$400k–$499k',count:14,pct:15.9},{name:'$500k–$599k',count:4,pct:4.5},{name:'$600k+',count:8,pct:9.1}],
+    financing:[{label:'Conventional',pct:53.4,'color':'#1d5fa8'},{label:'Cash',pct:27.3,'color':'#15803d'},{label:'FHA',pct:8.0,'color':'#c8941a'},{label:'Other',pct:6.8,'color':'#8896aa'},{label:'VA',pct:4.5,'color':'#6d28d9'}],
+    bedrooms:[{beds:'1 BR',count:2,median:149500,pct:2.3},{beds:'2 BR',count:25,median:175000,pct:28.4},{beds:'3 BR',count:40,median:339500,pct:45.5},{beds:'4 BR',count:16,median:414500,pct:18.2},{beds:'5 BR',count:1,median:405000,pct:1.1},{beds:'7 BR',count:1,median:463000,pct:1.1},{beds:'8 BR',count:1,median:2500000,pct:1.1}],
+    decades:[{era:'1800s',count:13,pct:14.8},{era:'Pre-1920',count:5,pct:5.7},{era:'1920s–40s',count:14,pct:15.9},{era:'1950s–60s',count:10,pct:11.4},{era:'1970s–80s',count:26,pct:29.5},{era:'1990s–00s',count:14,pct:15.9},{era:'2010s',count:2,pct:2.3},{era:'2020s+',count:4,pct:4.5}],
+    notes:'Newport is a mid-size Sullivan County market with 88 closed sales. Median of $312,500 reflects a mid-market price point. Median year built 1970 reflects mid-century housing stock.'
+  },
+  'Charlestown':{
+    county:'sullivan',sales:65,median:'$240,000',medianRaw:240000,avg:'$228,555',dom:21,lts:'97.5%',ppsf:'$104',sqft:924,yearBuilt:1978,beds:3.0,priceMin:'$12,500',priceMax:'$470,000',origToSale:'94.3%',dtc:44,reduction:'32.3%',overask:'16.9%',lotAcres:'0.71 acres',
+    propTypes:{sf:34,mobile:31},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[2, 3, 3, 8, 5, 5, 6, 9, 10, 8, 3, 3],median:[257450, 120000, 400000, 130000, 145000, 349000, 166500, 330000, 272450, 164000, 306500, 70000],dom:[36.5, 42.0, 5.0, 20.5, 28.0, 7.0, 18.0, 25.0, 24.5, 20.0, 21.0, 64.0],ppsf:[154, null, 33, 95, 281, null, 110, 136, 307, 100, null, 65],overask:[50.0, 0.0, 0.0, 0.0, 0.0, 40.0, 16.7, 11.1, 30.0, 25.0, 33.3, 0.0],reduction:[50.0, 33.3, 33.3, 50.0, 40.0, 0.0, 0.0, 44.4, 60.0, 25.0, 0.0, 0.0],dtc:[60, 65, 28, 44, 51, 30, 41, 48, 48, 43, 44, 87]},
+    bands:[{name:'Under $200k',count:31,pct:47.7},{name:'$200k–$299k',count:9,pct:13.8},{name:'$300k–$399k',count:18,pct:27.7},{name:'$400k–$499k',count:7,pct:10.8}],
+    financing:[{label:'Cash',pct:43.1,'color':'#15803d'},{label:'Conventional',pct:30.8,'color':'#1d5fa8'},{label:'FHA',pct:10.8,'color':'#c8941a'},{label:'VA',pct:7.7,'color':'#6d28d9'},{label:'Other',pct:7.7,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:1,median:353000,pct:1.5},{beds:'2 BR',count:27,median:159000,pct:41.5},{beds:'3 BR',count:30,median:295000,pct:46.2},{beds:'4 BR',count:6,median:149950,pct:9.2},{beds:'5 BR',count:1,median:300000,pct:1.5}],
+    decades:[{era:'1800s',count:2,pct:3.1},{era:'Pre-1920',count:3,pct:4.6},{era:'1920s–40s',count:6,pct:9.2},{era:'1950s–60s',count:8,pct:12.3},{era:'1970s–80s',count:23,pct:35.4},{era:'1990s–00s',count:15,pct:23.1},{era:'2010s',count:3,pct:4.6},{era:'2020s+',count:5,pct:7.7}],
+    notes:'Charlestown is a mid-size Sullivan County market with 65 closed sales. Median of $240,000 positions this as an entry-level market. Cash buyers at 43% signals investor or vacation-home demand. Median year built 1978 reflects mid-century housing stock.'
+  },
+  'Sunapee':{
+    county:'sullivan',sales:54,median:'$592,500',medianRaw:592500,avg:'$1,211,331',dom:26,lts:'98.7%',ppsf:'$435',sqft:808,yearBuilt:1980,beds:3.0,priceMin:'$235,000',priceMax:'$9,500,000',origToSale:'96.6%',dtc:49,reduction:'35.2%',overask:'18.5%',lotAcres:'1.10 acres',
+    propTypes:{sf:50,condo:4},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[4, 2, 3, 2, 6, 2, 9, 7, 2, 4, 6, 7],median:[674500, 1297500, 1950000, 3460500, 552500, 437500, 835000, 1200000, 563750, 1022500, 424500, 400000],dom:[39.0, 121.0, 190.0, 3.0, 17.5, 26.0, 9.0, 57.0, 10.0, 16.5, 71.5, 28.0],ppsf:[null, null, null, null, 435, null, null, 506, 405, null, 443, 457],overask:[25.0, 0.0, 0.0, 50.0, 50.0, 0.0, 22.2, 14.3, 0.0, 0.0, 0.0, 28.6],reduction:[25.0, 50.0, 33.3, 0.0, 33.3, 50.0, 11.1, 71.4, 0.0, 0.0, 83.3, 28.6],dtc:[62, 144, 213, 26, 40, 49, 32, 80, 33, 40, 94, 51]},
+    bands:[{name:'$200k–$299k',count:3,pct:5.6},{name:'$300k–$399k',count:9,pct:16.7},{name:'$400k–$499k',count:7,pct:13.0},{name:'$500k–$599k',count:8,pct:14.8},{name:'$600k+',count:27,pct:50.0}],
+    financing:[{label:'Cash',pct:51.9,'color':'#15803d'},{label:'Conventional',pct:38.9,'color':'#1d5fa8'},{label:'Other',pct:5.6,'color':'#8896aa'},{label:'FHA',pct:1.9,'color':'#c8941a'},{label:'VA',pct:1.9,'color':'#6d28d9'}],
+    bedrooms:[{beds:'1 BR',count:2,median:249000,pct:3.7},{beds:'2 BR',count:10,median:345000,pct:18.5},{beds:'3 BR',count:18,median:572450,pct:33.3},{beds:'4 BR',count:15,median:1070000,pct:27.8},{beds:'5 BR',count:6,median:1658500,pct:11.1},{beds:'6 BR',count:1,median:5215000,pct:1.9}],
+    decades:[{era:'Pre-1800',count:1,pct:1.9},{era:'1800s',count:4,pct:7.4},{era:'Pre-1920',count:5,pct:9.3},{era:'1920s–40s',count:3,pct:5.6},{era:'1950s–60s',count:4,pct:7.4},{era:'1970s–80s',count:18,pct:33.3},{era:'1990s–00s',count:12,pct:22.2},{era:'2010s',count:5,pct:9.3},{era:'2020s+',count:2,pct:3.7}],
+    notes:'Sunapee is a mid-size Sullivan County market with 54 closed sales. Median of $592,500 reflects an upper-tier price point for the region. Cash buyers at 52% signals investor or vacation-home demand. Median year built 1980 reflects mid-century housing stock. Median lot of 1.10 acres reflects rural character.'
+  },
+  'Washington':{
+    county:'sullivan',sales:32,median:'$427,450',medianRaw:427450,avg:'$520,369',dom:14,lts:'100.0%',ppsf:'$651',sqft:723,yearBuilt:1980,beds:3.0,priceMin:'$190,000',priceMax:'$2,895,000',origToSale:'100.0%',dtc:38,reduction:'25.0%',overask:'34.4%',lotAcres:'1.52 acres',
+    propTypes:{sf:32},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25"],sales:[2, 1, 2, 2, 4, 1, 8, 5, 5, 1, 1],median:[355000, 400000, 236950, 397500, 615000, 400000, 447500, 507500, 424900, 535000, 399000],dom:[19.5, 11.0, 17.5, 17.0, 15.5, 25.0, 11.0, 14.0, 14.0, 157.0, 70.0],ppsf:[null, null, 236, null, 898, null, 538, 646, null, null, null],overask:[100.0, 100.0, 0.0, 50.0, 25.0, 0.0, 37.5, 40.0, 20.0, 0.0, 0.0],reduction:[0.0, 0.0, 0.0, 0.0, 25.0, 0.0, 37.5, 20.0, 20.0, 100.0, 100.0],dtc:[42, 34, 40, 40, 38, 48, 34, 37, 37, 180, 93]},
+    bands:[{name:'Under $200k',count:1,pct:3.1},{name:'$200k–$299k',count:3,pct:9.4},{name:'$300k–$399k',count:9,pct:28.1},{name:'$400k–$499k',count:8,pct:25.0},{name:'$500k–$599k',count:4,pct:12.5},{name:'$600k+',count:7,pct:21.9}],
+    financing:[{label:'Conventional',pct:50.0,'color':'#1d5fa8'},{label:'Cash',pct:34.4,'color':'#15803d'},{label:'VA',pct:9.4,'color':'#6d28d9'},{label:'FHA',pct:6.2,'color':'#c8941a'}],
+    bedrooms:[{beds:'1 BR',count:1,median:190000,pct:3.1},{beds:'2 BR',count:8,median:399499,pct:25.0},{beds:'3 BR',count:17,median:430000,pct:53.1},{beds:'4 BR',count:5,median:430000,pct:15.6},{beds:'5 BR',count:1,median:535000,pct:3.1}],
+    decades:[{era:'Pre-1800',count:1,pct:3.1},{era:'1800s',count:2,pct:6.2},{era:'1920s–40s',count:1,pct:3.1},{era:'1950s–60s',count:1,pct:3.1},{era:'1970s–80s',count:13,pct:40.6},{era:'1990s–00s',count:9,pct:28.1},{era:'2010s',count:2,pct:6.2},{era:'2020s+',count:3,pct:9.4}],
+    notes:'Washington is a smaller Sullivan County community with 32 sales. Median of $427,450 reflects a mid-market price point. Median year built 1980 reflects mid-century housing stock. Median lot of 1.52 acres reflects rural character.'
+  },
+  'Unity':{
+    county:'sullivan',sales:22,median:'$437,500',medianRaw:437500,avg:'$436,198',dom:20,lts:'98.9%',ppsf:'$250',sqft:920,yearBuilt:1982,beds:3.0,priceMin:'$115,000',priceMax:'$900,000',origToSale:'97.5%',dtc:42,reduction:'22.7%',overask:'31.8%',lotAcres:'7.12 acres',
+    propTypes:{sf:20,mobile:2},
+    monthly:{months:["Feb 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Oct 25", "Nov 25", "Dec 25"],sales:[2, 1, 2, 5, 3, 4, 2, 1, 2],median:[477500, 640000, 422500, 320000, 419557, 440000, 385000, 399900, 557450],dom:[106.5, 19.0, 103.0, 7.0, 10.0, 18.5, 42.5, 7.0, 8.5],ppsf:[null, null, 250, null, null, null, null, null, null],overask:[50.0, 0.0, 0.0, 60.0, 66.7, 25.0, 0.0, 0.0, 0.0],reduction:[100.0, 0.0, 50.0, 0.0, 0.0, 0.0, 100.0, 0.0, 0.0],dtc:[130, 42, 126, 30, 33, 42, 66, 30, 32]},
+    bands:[{name:'Under $200k',count:2,pct:9.1},{name:'$200k–$299k',count:2,pct:9.1},{name:'$300k–$399k',count:5,pct:22.7},{name:'$400k–$499k',count:4,pct:18.2},{name:'$500k–$599k',count:6,pct:27.3},{name:'$600k+',count:3,pct:13.6}],
+    financing:[{label:'Conventional',pct:54.5,'color':'#1d5fa8'},{label:'Cash',pct:18.2,'color':'#15803d'},{label:'VA',pct:18.2,'color':'#6d28d9'},{label:'Other',pct:4.5,'color':'#8896aa'},{label:'FHA',pct:4.5,'color':'#c8941a'}],
+    bedrooms:[{beds:'2 BR',count:6,median:460000,pct:27.3},{beds:'3 BR',count:14,median:409728,pct:63.6},{beds:'4 BR',count:2,median:737500,pct:9.1}],
+    decades:[{era:'Pre-1800',count:1,pct:4.5},{era:'1800s',count:2,pct:9.1},{era:'1950s–60s',count:1,pct:4.5},{era:'1970s–80s',count:12,pct:54.5},{era:'1990s–00s',count:6,pct:27.3}],
+    notes:'Unity is a smaller Sullivan County community with 22 sales. Median of $437,500 reflects a mid-market price point. Median year built 1982 reflects mid-century housing stock. Median lot of 7.12 acres reflects rural character.'
+  },
+  'Goshen':{
+    county:'sullivan',sales:16,median:'$420,000',medianRaw:420000,avg:'$534,681',dom:48,lts:'98.6%',ppsf:'$569',sqft:984,yearBuilt:1952,beds:3.0,priceMin:'$310,000',priceMax:'$1,250,000',origToSale:'96.3%',dtc:71,reduction:'43.8%',overask:'31.2%',lotAcres:'5.10 acres',
+    propTypes:{sf:16},
+    monthly:{months:["Feb 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25"],sales:[2, 1, 1, 1, 1, 4, 3, 3],median:[333750, 425000, 1250000, 420000, 310000, 782500, 357400, 420000],dom:[81.5, 6.0, 0.0, 124.0, 9.0, 43.5, 5.0, 100.0],ppsf:[null, null, null, null, null, null, 569, null],overask:[0.0, 100.0, 0.0, 0.0, 0.0, 25.0, 66.7, 33.3],reduction:[50.0, 0.0, 0.0, 100.0, 0.0, 50.0, 33.3, 66.7],dtc:[104, 29, 23, 147, 32, 66, 28, 123]},
+    bands:[{name:'$300k–$399k',count:7,pct:43.8},{name:'$400k–$499k',count:5,pct:31.2},{name:'$500k–$599k',count:1,pct:6.2},{name:'$600k+',count:3,pct:18.8}],
+    financing:[{label:'Conventional',pct:56.2,'color':'#1d5fa8'},{label:'Cash',pct:31.2,'color':'#15803d'},{label:'VA',pct:6.2,'color':'#6d28d9'},{label:'Other',pct:6.2,'color':'#8896aa'}],
+    bedrooms:[{beds:'2 BR',count:4,median:365000,pct:25.0},{beds:'3 BR',count:9,median:465000,pct:56.2},{beds:'4 BR',count:3,median:337500,pct:18.8}],
+    decades:[{era:'Pre-1800',count:2,pct:12.5},{era:'1800s',count:2,pct:12.5},{era:'Pre-1920',count:1,pct:6.2},{era:'1920s–40s',count:1,pct:6.2},{era:'1950s–60s',count:4,pct:25.0},{era:'1970s–80s',count:2,pct:12.5},{era:'1990s–00s',count:3,pct:18.8},{era:'2020s+',count:1,pct:6.2}],
+    notes:'Goshen is a smaller Sullivan County community with 16 sales. Median of $420,000 reflects a mid-market price point. Median year built 1952 creates renovation opportunity built into pricing. Median lot of 5.10 acres reflects rural character.'
+  },
+  'Acworth':{
+    county:'sullivan',sales:17,median:'$385,000',medianRaw:385000,avg:'$363,274',dom:34,lts:'96.0%',ppsf:'$234',sqft:600,yearBuilt:1966,beds:2.0,priceMin:'$85,000',priceMax:'$870,000',origToSale:'95.2%',dtc:57,reduction:'11.8%',overask:'17.6%',lotAcres:'3.30 acres',
+    propTypes:{sf:17},
+    monthly:{months:["Feb 25", "Mar 25", "Apr 25", "May 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Dec 25", "Jan 26"],sales:[2, 2, 1, 3, 3, 1, 1, 2, 1, 1],median:[222500, 412500, 85000, 270000, 500000, 375000, 120000, 321450, 500000, 475000],dom:[85.0, 182.0, 59.0, 7.0, 34.0, 3.0, 101.0, 10.0, 63.0, 5.0],ppsf:[175, null, 142, 340, null, null, 234, 562, null, null],overask:[0.0, 0.0, 0.0, 33.3, 0.0, 0.0, 0.0, 100.0, 0.0, 0.0],reduction:[50.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],dtc:[108, 205, 82, 30, 57, 26, 124, 33, 86, 28]},
+    bands:[{name:'Under $200k',count:4,pct:23.5},{name:'$200k–$299k',count:3,pct:17.6},{name:'$300k–$399k',count:2,pct:11.8},{name:'$400k–$499k',count:5,pct:29.4},{name:'$500k–$599k',count:2,pct:11.8},{name:'$600k+',count:1,pct:5.9}],
+    financing:[{label:'Cash',pct:70.6,'color':'#15803d'},{label:'Conventional',pct:17.6,'color':'#1d5fa8'},{label:'FHA',pct:5.9,'color':'#c8941a'},{label:'Other',pct:5.9,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:3,median:120000,pct:17.6},{beds:'2 BR',count:6,median:341450,pct:35.3},{beds:'3 BR',count:5,median:450000,pct:29.4},{beds:'4 BR',count:2,median:412500,pct:11.8},{beds:'5 BR',count:1,median:462750,pct:5.9}],
+    decades:[{era:'Pre-1800',count:2,pct:11.8},{era:'1800s',count:3,pct:17.6},{era:'1920s–40s',count:2,pct:11.8},{era:'1950s–60s',count:2,pct:11.8},{era:'1970s–80s',count:4,pct:23.5},{era:'1990s–00s',count:2,pct:11.8},{era:'2010s',count:1,pct:5.9},{era:'2020s+',count:1,pct:5.9}],
+    notes:'Acworth is a smaller Sullivan County community with 17 sales. Median of $385,000 reflects a mid-market price point. Cash buyers at 71% signals investor or vacation-home demand. Median year built 1966 reflects mid-century housing stock. Median lot of 3.30 acres reflects rural character.'
+  },
+  'Springfield':{
+    county:'sullivan',sales:15,median:'$400,000',medianRaw:400000,avg:'$428,567',dom:9,lts:'98.9%',ppsf:'$469',sqft:768,yearBuilt:1995,beds:3.0,priceMin:'$275,000',priceMax:'$669,500',origToSale:'97.8%',dtc:32,reduction:'26.7%',overask:'26.7%',lotAcres:'4.09 acres',
+    propTypes:{sf:15},
+    monthly:{months:["Feb 25", "Mar 25", "May 25", "Jun 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25"],sales:[1, 1, 3, 3, 1, 2, 1, 2, 1],median:[340000, 669500, 435000, 344000, 540000, 405000, 485000, 400000, 400000],dom:[18.0, 6.0, 7.0, 20.0, 28.0, 54.0, 109.0, 4.5, 5.0],ppsf:[420, null, 469, null, null, null, null, 564, null],overask:[0.0, 100.0, 33.3, 33.3, 0.0, 0.0, 0.0, 0.0, 100.0],reduction:[0.0, 0.0, 33.3, 0.0, 100.0, 50.0, 100.0, 0.0, 0.0],dtc:[41, 29, 30, 43, 51, 77, 132, 28, 28]},
+    bands:[{name:'$200k–$299k',count:1,pct:6.7},{name:'$300k–$399k',count:6,pct:40.0},{name:'$400k–$499k',count:4,pct:26.7},{name:'$500k–$599k',count:3,pct:20.0},{name:'$600k+',count:1,pct:6.7}],
+    financing:[{label:'Conventional',pct:53.3,'color':'#1d5fa8'},{label:'Cash',pct:13.3,'color':'#15803d'},{label:'FHA',pct:13.3,'color':'#c8941a'},{label:'VA',pct:13.3,'color':'#6d28d9'},{label:'Other',pct:6.7,'color':'#8896aa'}],
+    bedrooms:[{beds:'1 BR',count:1,median:275000,pct:6.7},{beds:'2 BR',count:6,median:347000,pct:40.0},{beds:'3 BR',count:6,median:505000,pct:40.0},{beds:'4 BR',count:2,median:507500,pct:13.3}],
+    decades:[{era:'1800s',count:3,pct:20.0},{era:'1970s–80s',count:4,pct:26.7},{era:'1990s–00s',count:7,pct:46.7},{era:'2010s',count:1,pct:6.7}],
+    notes:'Springfield is a smaller Sullivan County community with 15 sales. Median of $400,000 reflects a mid-market price point. Median year built 1995 indicates newer construction. Median lot of 4.09 acres reflects rural character.'
+  },
+  'Cornish':{
+    county:'sullivan',sales:12,median:'$512,500',medianRaw:512500,avg:'$596,417',dom:32,lts:'98.9%',ppsf:'$343',sqft:864,yearBuilt:1978,beds:3.0,priceMin:'$225,000',priceMax:'$1,460,000',origToSale:'97.6%',dtc:56,reduction:'33.3%',overask:'25.0%',lotAcres:'5.00 acres',
+    propTypes:{sf:11,mobile:1},
+    monthly:{months:["Mar 25", "May 25", "Jul 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26"],sales:[1, 1, 1, 3, 1, 3, 2],median:[685000, 1460000, 760000, 748000, 400000, 339000, 350000],dom:[85.0, 100.0, 23.0, 51.0, 3.0, 12.0, 24.5],ppsf:[null, null, null, 442, null, 244, null],overask:[0.0, 0.0, 0.0, 33.3, 100.0, 33.3, 0.0],reduction:[0.0, 0.0, 100.0, 33.3, 0.0, 33.3, 50.0],dtc:[108, 123, 46, 74, 26, 35, 48]},
+    bands:[{name:'$200k–$299k',count:2,pct:16.7},{name:'$300k–$399k',count:2,pct:16.7},{name:'$400k–$499k',count:2,pct:16.7},{name:'$600k+',count:6,pct:50.0}],
+    financing:[{label:'Conventional',pct:75.0,'color':'#1d5fa8'},{label:'FHA',pct:8.3,'color':'#c8941a'},{label:'Cash',pct:8.3,'color':'#15803d'},{label:'VA',pct:8.3,'color':'#6d28d9'}],
+    bedrooms:[{beds:'2 BR',count:3,median:355000,pct:25.0},{beds:'3 BR',count:7,median:685000,pct:58.3},{beds:'4 BR',count:1,median:339000,pct:8.3},{beds:'5 BR',count:1,median:1460000,pct:8.3}],
+    decades:[{era:'Pre-1800',count:1,pct:8.3},{era:'1800s',count:1,pct:8.3},{era:'1920s–40s',count:1,pct:8.3},{era:'1950s–60s',count:1,pct:8.3},{era:'1970s–80s',count:3,pct:25.0},{era:'1990s–00s',count:5,pct:41.7}],
+    notes:'Cornish is a small rural Sullivan County community with only 12 sales – interpret all metrics with caution at this volume. Median of $512,500 reflects an upper-tier price point for the region. Median year built 1978 reflects mid-century housing stock. Median lot of 5.00 acres reflects rural character.'
+  },
+  'Croydon':{
+    county:'sullivan',sales:10,median:'$414,000',medianRaw:414000,avg:'$471,300',dom:6,lts:'100.5%',ppsf:'$572',sqft:745,yearBuilt:1993,beds:3.0,priceMin:'$360,000',priceMax:'$750,000',origToSale:'100.5%',dtc:28,reduction:'0.0%',overask:'50.0%',lotAcres:'4.03 acres',
+    propTypes:{sf:10},
+    monthly:{months:["Apr 25", "Jun 25", "Jul 25", "Aug 25", "Nov 25"],sales:[1, 1, 5, 2, 1],median:[750000, 360000, 428000, 450000, 365000],dom:[6.0, 9.0, 5.0, 23.5, 18.0],ppsf:[null, null, 572, null, null],overask:[100.0, 100.0, 60.0, 0.0, 0.0],reduction:[0.0, 0.0, 0.0, 0.0, 0.0],dtc:[29, 32, 28, 46, 41]},
+    bands:[{name:'$300k–$399k',count:4,pct:40.0},{name:'$400k–$499k',count:3,pct:30.0},{name:'$500k–$599k',count:1,pct:10.0},{name:'$600k+',count:2,pct:20.0}],
+    financing:[{label:'Cash',pct:40.0,'color':'#15803d'},{label:'Conventional',pct:30.0,'color':'#1d5fa8'},{label:'FHA',pct:10.0,'color':'#c8941a'},{label:'VA',pct:10.0,'color':'#6d28d9'},{label:'Other',pct:10.0,'color':'#8896aa'}],
+    bedrooms:[{beds:'2 BR',count:4,median:414000,pct:40.0},{beds:'3 BR',count:5,median:475000,pct:50.0},{beds:'4 BR',count:1,median:380000,pct:10.0}],
+    decades:[{era:'1800s',count:1,pct:10.0},{era:'1920s–40s',count:1,pct:10.0},{era:'1950s–60s',count:1,pct:10.0},{era:'1970s–80s',count:1,pct:10.0},{era:'1990s–00s',count:4,pct:40.0},{era:'2010s',count:1,pct:10.0},{era:'2020s+',count:1,pct:10.0}],
+    notes:'Croydon is a small rural Sullivan County community with only 10 sales – interpret all metrics with caution at this volume. Median of $414,000 reflects a mid-market price point. Cash buyers at 40% signals investor or vacation-home demand. Median year built 1993 indicates newer construction. Median lot of 4.03 acres reflects rural character.'
+  },
+  'Plainfield':{
+    county:'sullivan',sales:11,median:'$505,000',medianRaw:505000,avg:'$577,737',dom:13,lts:'100.0%',ppsf:'$466',sqft:912,yearBuilt:1983,beds:3.0,priceMin:'$369,000',priceMax:'$1,180,111',origToSale:'100.0%',dtc:36,reduction:'9.1%',overask:'18.2%',lotAcres:'6.30 acres',
+    propTypes:{sf:11},
+    monthly:{months:["Feb 25", "Apr 25", "Jun 25", "Jul 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25"],sales:[1, 1, 3, 1, 2, 1, 1, 1],median:[641000, 1180111, 445000, 400000, 692500, 450000, 505000, 369000],dom:[5.0, 84.0, 15.0, 6.0, 6.5, 30.0, 5.0, 17.0],ppsf:[null, null, null, 463, null, 469, null, null],overask:[100.0, 0.0, 0.0, 100.0, 0.0, 0.0, 0.0, 0.0],reduction:[0.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],dtc:[28, 107, 38, 29, 30, 53, 28, 40]},
+    bands:[{name:'$300k–$399k',count:1,pct:9.1},{name:'$400k–$499k',count:4,pct:36.4},{name:'$500k–$599k',count:3,pct:27.3},{name:'$600k+',count:3,pct:27.3}],
+    financing:[{label:'Conventional',pct:81.8,'color':'#1d5fa8'},{label:'VA',pct:9.1,'color':'#6d28d9'},{label:'Cash',pct:9.1,'color':'#15803d'}],
+    bedrooms:[{beds:'2 BR',count:3,median:400000,pct:27.3},{beds:'3 BR',count:6,median:547500,pct:54.5},{beds:'4 BR',count:2,median:620000,pct:18.2}],
+    decades:[{era:'1800s',count:1,pct:9.1},{era:'1950s–60s',count:1,pct:9.1},{era:'1970s–80s',count:6,pct:54.5},{era:'1990s–00s',count:3,pct:27.3}],
+    notes:'Plainfield is a small rural Sullivan County community with only 11 sales – interpret all metrics with caution at this volume. Median of $505,000 reflects an upper-tier price point for the region. Median year built 1983 reflects mid-century housing stock. Median lot of 6.30 acres reflects rural character.'
+  },
+  'Lempster':{
+    county:'sullivan',sales:8,median:'$360,000',medianRaw:360000,avg:'$347,376',dom:10,lts:'101.0%',ppsf:'–',sqft:0,yearBuilt:2001,beds:3.0,priceMin:'$150,000',priceMax:'$497,500',origToSale:'101.0%',dtc:32,reduction:'12.5%',overask:'50.0%',lotAcres:'1.92 acres',
+    propTypes:{sf:7,mobile:1},
+    monthly:{months:["Feb 25", "Mar 25", "May 25", "Sep 25", "Oct 25", "Dec 25"],sales:[1, 1, 3, 1, 1, 1],median:[260000, 291511, 410000, 497500, 150000, 320000],dom:[8.0, 6.0, 5.0, 11.0, 45.0, 125.0],ppsf:[null, null, null, null, null, null],overask:[100.0, 100.0, 66.7, 0.0, 0.0, 0.0],reduction:[0.0, 0.0, 0.0, 0.0, 0.0, 100.0],dtc:[31, 29, 28, 34, 68, 148]},
+    bands:[{name:'Under $200k',count:1,pct:12.5},{name:'$200k–$299k',count:2,pct:25.0},{name:'$300k–$399k',count:1,pct:12.5},{name:'$400k–$499k',count:4,pct:50.0}],
+    financing:[{label:'Conventional',pct:50.0,'color':'#1d5fa8'},{label:'Cash',pct:37.5,'color':'#15803d'},{label:'FHA',pct:12.5,'color':'#c8941a'}],
+    bedrooms:[{beds:'2 BR',count:1,median:291511,pct:12.5},{beds:'3 BR',count:6,median:405000,pct:75.0},{beds:'4 BR',count:1,median:150000,pct:12.5}],
+    decades:[{era:'1970s–80s',count:2,pct:25.0},{era:'1990s–00s',count:4,pct:50.0},{era:'2010s',count:1,pct:12.5},{era:'2020s+',count:1,pct:12.5}],
+    notes:'Lempster is a small rural Sullivan County community with only 8 sales – interpret all metrics with caution at this volume. Median of $360,000 reflects a mid-market price point. Median year built 2001 indicates newer construction. Median lot of 1.92 acres reflects rural character.'
+  },
+  'Langdon':{
+    county:'sullivan',sales:2,median:'$406,750',medianRaw:406750,avg:'$406,750',dom:6,lts:'102.5%',ppsf:'–',sqft:0,yearBuilt:1988,beds:2.5,priceMin:'$290,000',priceMax:'$523,500',origToSale:'102.5%',dtc:30,reduction:'0.0%',overask:'50.0%',lotAcres:'2.95 acres',
+    propTypes:{sf:2},
+    monthly:{months:["Mar 25", "Jul 25"],sales:[1, 1],median:[523500, 290000],dom:[2.0, 11.0],ppsf:[null, null],overask:[100.0, 0.0],reduction:[0.0, 0.0],dtc:[25, 34]},
+    bands:[{name:'$200k–$299k',count:1,pct:50.0},{name:'$500k–$599k',count:1,pct:50.0}],
+    financing:[{label:'Conventional',pct:100.0,'color':'#1d5fa8'}],
+    bedrooms:[{beds:'2 BR',count:1,median:290000,pct:50.0},{beds:'3 BR',count:1,median:523500,pct:50.0}],
+    decades:[{era:'1950s–60s',count:1,pct:50.0},{era:'2010s',count:1,pct:50.0}],
+    notes:'Langdon is a small rural Sullivan County community with only 2 sales – interpret all metrics with caution at this volume. Median of $406,750 reflects a mid-market price point. Median year built 1988 reflects mid-century housing stock. Median lot of 2.95 acres reflects rural character.'
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+// PDF SELECTION STATE
+// ═══════════════════════════════════════════════════════════
+let pdfItems = {}; // id -> { title, html, insight, county }
+
+function toggleSelect(id, title, html, insight, county) {
+  if (pdfItems[id]) {
+    delete pdfItems[id];
+  } else {
+    pdfItems[id] = { title, html, insight, county };
+  }
+  updateTray();
+  // Update checkbox visual
+  const cb = document.getElementById('cb-'+id);
+  if (cb) {
+    cb.classList.toggle('checked', !!pdfItems[id]);
+    cb.closest('.selectable')?.classList.toggle('is-selected', !!pdfItems[id]);
+  }
+}
+
+function updateTray() {
+  const count = Object.keys(pdfItems).length;
+  document.getElementById('tray-count').textContent = count + ' selected';
+  document.getElementById('pdf-tray').classList.toggle('visible', count > 0);
+}
+
+function clearAll() {
+  pdfItems = {};
+  updateTray();
+  document.querySelectorAll('.sel-check').forEach(cb => {
+    cb.classList.remove('checked');
+    cb.closest('.selectable')?.classList.remove('is-selected');
+  });
+}
+
+// Wrap a chart-wrap element with selectable overlay
+function makeSelectable(wrap, id, title, insightFn) {
+  if (!wrap) return;
+  wrap.classList.add('selectable');
+  const existing = wrap.querySelector('.sel-check');
+  if (existing) existing.remove();
+  const btn = document.createElement('div');
+  btn.className = 'sel-check';
+  btn.id = 'cb-' + id;
+  btn.title = 'Add to PDF';
+  if (pdfItems[id]) btn.classList.add('checked');
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const html = wrap.innerHTML;
+    const insight = insightFn ? insightFn() : '';
+    toggleSelect(id, title, html, insight, curCounty);
+  });
+  wrap.appendChild(btn);
+  wrap.classList.toggle('is-selected', !!pdfItems[id]);
+}
+
+// Apply selectable to all .chart-wrap elements in a container after render
+function applySelectables(container, county) {
+  container.querySelectorAll('.chart-wrap').forEach(cw => {
+    const titleEl = cw.querySelector('.chart-title');
+    if (!titleEl) return;
+    const rawTitle = titleEl.textContent.trim();
+    const id = county + '_' + rawTitle.replace(/\s+/g,'_').toLowerCase().substring(0,40);
+    if (!cw.querySelector('.sel-check')) {
+      makeSelectable(cw, id, rawTitle, null);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// PDF MODAL
+// ═══════════════════════════════════════════════════════════
+function openPdfModal() {
+  loadBranding();
+  const list = document.getElementById('pm-selected-list');
+  const count = Object.keys(pdfItems).length;
+  document.getElementById('pm-count').textContent = count;
+  list.innerHTML = Object.entries(pdfItems).map(([id, item]) =>
+    `<div class="pm-selected-item">
+      <div class="pm-item-dot"></div>
+      <span class="pm-item-name">${item.title}</span>
+      <span class="pm-item-remove" onclick="removePdfItem('${id}')">✕</span>
+    </div>`
+  ).join('') || '<div style="font-size:11px;color:var(--mgray);text-align:center;padding:8px">No items selected</div>';
+  document.getElementById('pdf-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function removePdfItem(id) {
+  delete pdfItems[id];
+  updateTray();
+  const cb = document.getElementById('cb-'+id);
+  if (cb) { cb.classList.remove('checked'); cb.closest('.selectable')?.classList.remove('is-selected'); }
+  openPdfModal(); // re-render list
+}
+
+function closePdfModal() {
+  document.getElementById('pdf-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closePdfModalOutside(e) { if (e.target === document.getElementById('pdf-modal-overlay')) closePdfModal(); }
+
+// ═══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+// AGENT BRANDING
+// ══════════════════════════════════════════════════════════════════
+function loadBranding() {
+  try {
+    const b = JSON.parse(localStorage.getItem('nhmi_agent') || '{}');
+    if (b.name)      document.getElementById('pm-brand-name').value      = b.name;
+    if (b.brokerage) document.getElementById('pm-brand-brokerage').value = b.brokerage;
+    if (b.phone)     document.getElementById('pm-brand-phone').value     = b.phone;
+    if (b.email)     document.getElementById('pm-brand-email').value     = b.email;
+    if (b.logo)      document.getElementById('pm-brand-logo').value      = b.logo;
+    if (b.name || b.brokerage) document.getElementById('pm-brand-badge').classList.add('show');
+  } catch(e) {}
+}
+function saveBranding() {
+  const b = {
+    name:      document.getElementById('pm-brand-name').value.trim(),
+    brokerage: document.getElementById('pm-brand-brokerage').value.trim(),
+    phone:     document.getElementById('pm-brand-phone').value.trim(),
+    email:     document.getElementById('pm-brand-email').value.trim(),
+    logo:      document.getElementById('pm-brand-logo').value.trim(),
+  };
+  localStorage.setItem('nhmi_agent', JSON.stringify(b));
+  const badge = document.getElementById('pm-brand-badge');
+  badge.textContent = 'Saved ✓';
+  badge.classList.add('show');
+  setTimeout(() => badge.classList.remove('show'), 2500);
+}
+function getBranding() {
+  return {
+    name:      (document.getElementById('pm-brand-name')?.value      || '').trim(),
+    brokerage: (document.getElementById('pm-brand-brokerage')?.value || '').trim(),
+    phone:     (document.getElementById('pm-brand-phone')?.value     || '').trim(),
+    email:     (document.getElementById('pm-brand-email')?.value     || '').trim(),
+    logo:      (document.getElementById('pm-brand-logo')?.value      || '').trim(),
+  };
+}
+function agentCardHtml(b) {
+  if (!b.name && !b.brokerage) return '';
+  const logoHtml = b.logo
+    ? `<img class="pr-agent-logo" src="${b.logo}" alt="logo">`
+    : `<div class="pr-agent-logo-placeholder">ðŸ¡</div>`;
+  const contact = [b.phone, b.email].filter(Boolean).join('  ·  ');
+  return `<div class="pr-agent-card">
+    ${logoHtml}
+    <div class="pr-agent-info">
+      ${b.name      ? `<div class="pr-agent-name">${b.name}</div>`           : ''}
+      ${b.brokerage ? `<div class="pr-agent-brokerage">${b.brokerage}</div>` : ''}
+      ${contact     ? `<div class="pr-agent-contact">${contact}</div>`       : ''}
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TOWN SNAPSHOT FOR PDF
+// ══════════════════════════════════════════════════════════════════
+let _curTownName = '';
+function addTownToPdf() {
+  const td = TOWNS[_curTownName];
+  if (!td) return;
+  const btn = document.getElementById('town-pdf-btn');
+  const id = 'town_snap_' + _curTownName.toLowerCase().replace(/\s+/g,'_');
+  if (pdfItems[id]) {
+    delete pdfItems[id];
+    btn.innerHTML = '📋 Add Town to PDF';
+    btn.classList.remove('added');
+  } else {
+    const county = td.county === 'cheshire' ? 'Cheshire County' : 'Sullivan County';
+    const snap = `<div style="font-family:'Inter',sans-serif;padding:4px 0"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#8896aa;margin-bottom:8px">${county} · Town Report</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="background:#f4f6fb;border-radius:8px;padding:10px 12px"><div style="font-size:18px;font-weight:800;color:#0f2244">${td.median}</div><div style="font-size:9px;color:#8896aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Median Price</div></div><div style="background:#f4f6fb;border-radius:8px;padding:10px 12px"><div style="font-size:18px;font-weight:800;color:#0f2244">${td.dom} days</div><div style="font-size:9px;color:#8896aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Median DOM</div></div><div style="background:#f4f6fb;border-radius:8px;padding:10px 12px"><div style="font-size:18px;font-weight:800;color:#0f2244">${td.lts}</div><div style="font-size:9px;color:#8896aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">List-to-Sale</div></div><div style="background:#f4f6fb;border-radius:8px;padding:10px 12px"><div style="font-size:18px;font-weight:800;color:#0f2244">${td.sales}</div><div style="font-size:9px;color:#8896aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Closed Sales</div></div></div><div style="font-size:10px;color:#3d4f6b;background:#f4f6fb;border-radius:8px;padding:9px 12px;line-height:1.6">${td.notes}</div><div style="font-size:9px;color:#8896aa;margin-top:6px">Range: ${td.priceMin} â€“ ${td.priceMax} · $/sqft: ${td.ppsf} · Over-Ask: ${td.overask} · Reductions: ${td.reduction}</div></div>`;
+    pdfItems[id] = { title: _curTownName + ' · Town Snapshot', html: snap, insight: '', county: td.county };
+    btn.innerHTML = '✅ Added to PDF';
+    btn.classList.add('added');
+  }
+  updateTray();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// BUILD & PRINT
+// ══════════════════════════════════════════════════════════════════
+function buildAndPrint() {
+  const titleInput = document.getElementById('pm-title-input').value || 'Market Data Report';
+  const clientInput = document.getElementById('pm-client-input').value || '';
+  const b = getBranding();
+  const today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const items = Object.values(pdfItems);
+
+  // Dynamic period from MO array â€” no hardcoded dates, survives monthly refresh
+  function expandMo(s) { const [mon,yr]=s.split(' '); return mon+' 20'+yr; }
+  const periodStr = MO.length>=2 ? expandMo(MO[0])+' â€“ '+expandMo(MO[MO.length-1]) : '12-Month Period';
+  const footerAgent = b.name ? b.name+(b.brokerage?' · '+b.brokerage:'') : 'NH Market Intel';
+
+  const coverHTML = `
+    <div class="pr-page">
+      <div class="pr-cover">
+        <div class="pr-cover-eye">NH Southwest Market Intelligence</div>
+        <div class="pr-cover-title">${titleInput}</div>
+        <div class="pr-cover-sub">PrimeMLS · 12-Month Closed Sales · ${periodStr}</div>
+        <div class="pr-cover-meta">
+          ${clientInput?`<div class="pr-meta-item"><span class="pr-meta-label">Prepared For</span>${clientInput}</div>`:''}
+          <div class="pr-meta-item"><span class="pr-meta-label">Date</span>${today}</div>
+          <div class="pr-meta-item"><span class="pr-meta-label">Charts Included</span>${items.length}</div>
+        </div>
+        ${agentCardHtml(b)}
+      </div>
+      ${items.length===0?'<p style="color:#8896aa;text-align:center;padding:40px">No charts selected.</p>':''}
+    </div>`;
+
+  let chartPages='';
+  for(let i=0;i<items.length;i+=2){
+    const pair=items.slice(i,i+2);
+    const isSingle=pair.length===1;
+    chartPages+=`<div class="pr-page"><div class="pr-grid${isSingle?' single':''}">
+      ${pair.map(item=>`<div class="pr-item"><div class="pr-item-title">${item.title}</div>${item.html}${item.insight?`<div class="pr-item-note">💡 ${item.insight}</div>`:''}</div>`).join('')}
+    </div><div class="pr-footer">NH Southwest Market Intelligence · PrimeMLS · ${today} · ${footerAgent}</div></div>`;
+  }
+
+  // Open in a new window for reliable cross-browser printing (incl. iOS Safari)
+  const printWin = window.open('', '_blank', 'width=900,height=700');
+  if (!printWin) {
+    // Popup blocked — fall back to inline print
+    document.getElementById('print-root').innerHTML = coverHTML + chartPages;
+    closePdfModal();
+    window.print();
+    return;
+  }
+  // Write a self-contained print page
+  const styles = Array.from(document.styleSheets)
+    .map(ss => { try { return Array.from(ss.cssRules).map(r=>r.cssText).join('\n'); } catch(e){ return ''; } })
+    .join('\n');
+  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>${titleInput}</title>
+<style>
+  body{font-family:'Inter',sans-serif;color:#0f2244;background:#fff;margin:0;padding:0;}
+  ${styles}
+  @page{margin:0.4in;}
+  body > *:not(#print-root){display:none!important;}
+  #print-root{display:block!important;}
+  .pr-page{page-break-after:always;padding:28px 32px;}
+  .pr-page:last-child{page-break-after:avoid;}
+  .pr-cover{background:linear-gradient(135deg,#0f2244,#1a3260);color:#fff;padding:40px;min-height:180px;border-radius:12px;margin-bottom:24px;}
+  .pr-cover-eye{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#c8941a;margin-bottom:8px;font-weight:700;}
+  .pr-cover-title{font-size:28px;font-weight:900;line-height:1.2;margin-bottom:6px;}
+  .pr-cover-sub{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:16px;}
+  .pr-cover-meta{display:flex;gap:24px;border-top:1px solid rgba(255,255,255,.15);padding-top:14px;}
+  .pr-meta-item{font-size:11px;}
+  .pr-meta-label{color:rgba(255,255,255,.5);font-size:9px;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:2px;}
+  .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .pr-grid.single{grid-template-columns:1fr;}
+  .pr-item{background:#fff;border:1px solid #edf0f7;border-radius:10px;padding:14px;break-inside:avoid;}
+  .pr-item-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8896aa;margin-bottom:10px;}
+  .pr-item-note{font-size:10px;color:#3d4f6b;margin-top:8px;line-height:1.5;background:#f4f6fb;border-radius:6px;padding:7px 9px;}
+  .pr-footer{font-size:9px;color:#8896aa;text-align:center;padding-top:12px;border-top:1px solid #edf0f7;margin-top:12px;}
+  .pr-agent-card{display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18);}
+  .pr-agent-logo{width:48px;height:48px;border-radius:8px;object-fit:contain;}
+  .pr-agent-logo-placeholder{width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;}
+  .pr-agent-info{flex:1;}
+  .pr-agent-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
+  .pr-agent-brokerage{font-size:11px;color:rgba(255,255,255,.65);}
+  .pr-agent-contact{font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;}
+  /* chart bars */
+  .bar-chart{display:flex;align-items:flex-end;gap:4px;height:100px;}
+  .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .bar{width:100%;background:#1d5fa8;border-radius:3px 3px 0 0;transition:height .3s;}
+  .bar-val{font-size:7px;color:#8896aa;}
+  .bar-lbl{font-size:7px;color:#8896aa;text-align:center;}
+  .line-chart{position:relative;height:80px;width:100%;}
+</style>
+</head><body><div id="print-root">${coverHTML}${chartPages}</div>
+<script>window.onload=function(){window.print();}<\/script>
+</body></html>`);
+  printWin.document.close();
+  closePdfModal();
+}
+
+// ═══════════════════════════════════════════════════════════
+// V5 STATE
+// ═══════════════════════════════════════════════════════════
+let curRange = 12;   // 3 | 6 | 12
+let curPersp = 'neutral'; // 'neutral' | 'seller' | 'buyer'
+let curPage   = 'overview'; // active panel
+let curCounty = 'cheshire'; // cheshire | sullivan | both
+let curPtype  = 'all';      // all | sf | mobile | condo
+
+const PERSP_COPY = {
+  seller: {
+    banner: '📈 Seller View – data framed from a listing perspective. All figures are factual.',
+    overview_cheshire: 'At 36.6% over-asking and a median DOM of 12 days, most properly priced Cheshire listings will see competitive offers within two weeks. The $300k–$399k band is where buyer demand is most concentrated.',
+    overview_sullivan: 'Sullivan\'s 25.3% over-asking rate and 18-day median DOM signal a market where well-priced listings move quickly. Cash buyers at 33.6% reduce contingency risk for sellers.',
+    market_timing: 'Spring listing (April–June) has historically produced the highest volume of competing buyers. Summer is still strong; winter sees reduced buyer pool.',
+    fin: 'Over 65% of buyers are using financing. Accepting conventional and VA offers expands the buyer pool significantly. FHA buyers are active – particularly in Claremont.',
+  },
+  buyer: {
+    banner: '🏡 Buyer View – data framed from a purchase perspective. All figures are factual.',
+    overview_cheshire: 'Cheshire\'s 36.6% over-asking rate and 12-day median DOM mean most homes go under contract within two weeks. Pre-approval and move-fast readiness are essential to compete.',
+    overview_sullivan: 'Sullivan is competitive but slightly less intense than Cheshire. Homes go under contract in about 18 days. The $200k–$299k band has the most concentrated competition from other buyers.',
+    market_timing: 'Fall and winter months (October–January) historically show lower buyer competition. Motivated sellers in slower months may have more flexibility on terms.',
+    fin: '33–35% of closed sales are cash – buyers competing against cash offers should minimize contingencies and confirm financing is rock-solid before making an offer.',
+  }
+};
+
+// Get a month-sliced copy of a monthly data object
+function sliceMonthly(monthly, range) {
+  if (range >= 12) return monthly;
+  const keys = Object.keys(monthly);
+  const result = {};
+  keys.forEach(k => {
+    if (Array.isArray(monthly[k])) {
+      result[k] = monthly[k].slice(-range);
+    } else {
+      result[k] = monthly[k];
+    }
+  });
+  return result;
+}
+
+// Get sliced month labels
+function getMO() {
+  return curRange >= 12 ? MO : MO.slice(-curRange);
+}
+function getMOS() {
+  return curRange >= 12 ? MOS : MOS.slice(-curRange);
+}
+
+// ═══════════════════════════════════════════════════════════
+// V5: COMPUTE RANGE-ADJUSTED KPI VALUES
+// When range < 12, derive values from monthly arrays.
+// Property type breakdowns (sf/mobile/condo) don't have
+// monthly data so they always use their static 12mo values.
+// ═══════════════════════════════════════════════════════════
+function getKpiValues(county, ptype, range) {
+  const d = CD[county];
+
+  // Map ptype to the monthly key
+  const monthlyKey = ptype === 'all' ? 'monthly'
+    : ptype === 'sf'     ? 'monthly_sf'
+    : ptype === 'mobile' ? 'monthly_mobile'
+    : ptype === 'condo'  ? 'monthly_condo'
+    : 'monthly';
+
+  const rawM = d[monthlyKey];
+
+  if (range >= 12) {
+    // Use pre-computed 12-month summary for speed, but still compute sales total from monthly
+    const totalSales = rawM.sales.reduce((a,b)=>a+b,0);
+    return { ...d[ptype], sales: totalSales, _lowVol: false };
+  }
+
+  // Slice to requested range
+  const m = sliceMonthly(rawM, range);
+  const totalSales = m.sales.reduce((a,b)=>a+b,0);
+  const _lowVol = totalSales < 15; // flag for thin slices (mobile/condo in 3mo)
+
+  // Median price: weighted median of monthly medians (by sales volume)
+  const priceMonths = m.median.map((v,i)=>({v,n:m.sales[i]})).filter(x=>x.n>0 && x.v>0);
+  const sorted = priceMonths.sort((a,b)=>a.v-b.v);
+  const totalW = sorted.reduce((s,x)=>s+x.n,0);
+  let cumW=0, medPrice=0;
+  for(const {v,n} of sorted){ cumW+=n; if(cumW>=totalW/2){medPrice=v;break;} }
+
+  const nonZero = arr => arr.filter((_,i)=>m.sales[i]>0);
+
+  const avgOf = arr => {
+    const vals = nonZero(arr);
+    return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
+  };
+
+  const avgDom      = Math.round(avgOf(m.dom));
+  const avgLts      = avgOf(m.lts).toFixed(1)+'%';
+  const avgPpsf     = '$'+Math.round(avgOf(m.ppsf));
+  const avgDtc      = Math.round(avgOf(m.dtc||[]));
+
+  // Overask & reduction: weighted average across months in range
+  const wgtAvg = arr => {
+    const vals = arr.filter((_,i)=>m.sales[i]>0);
+    const wgts = m.sales.filter(s=>s>0);
+    if(!vals.length) return 0;
+    const sum = vals.reduce((a,v,i)=>a+v*wgts[i],0);
+    const tot = wgts.reduce((a,b)=>a+b,0);
+    return sum/tot;
+  };
+  const avgOverask   = wgtAvg(m.overask).toFixed(1)+'%';
+  const avgReduction = wgtAvg(m.reduction).toFixed(1)+'%';
+
+  return {
+    median:    '$'+Math.round(medPrice).toLocaleString(),
+    sales:     totalSales,
+    dom:       avgDom,
+    lts:       avgLts,
+    ppsf:      avgPpsf,
+    overask:   avgOverask,
+    reduction: avgReduction,
+    dtc:       avgDtc,
+    _lowVol,
+  };
+}
+
+// Tooltip helper – wraps a label with a ? badge
+function tip(text) {
+  return `<span class="tip" tabindex="0">?<span class="tip-box">${text}</span></span>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// V5 NAVIGATION – Range & Perspective
+// ═══════════════════════════════════════════════════════════
+function setRange(r, btn) {
+  curRange = r;
+  document.querySelectorAll('.rbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function setPersp(p, btn) {
+  curPersp = p;
+  document.querySelectorAll('.pbtn').forEach(b => {
+    b.classList.remove('active-neutral','active-seller','active-buyer');
+  });
+  btn.classList.add('active-' + p);
+  render();
+}
+
+function perspBanner() {
+  if (curPersp === 'neutral') return '';
+  return `<div class="persp-banner ${curPersp}">${PERSP_COPY[curPersp].banner}</div>`;
+}
+
+function perspInsight(key) {
+  if (curPersp === 'neutral') return null;
+  return PERSP_COPY[curPersp][key] || null;
+}
+
+// ═══════════════════════════════════════════════════════════
+// V5 COMPARE TOOL
+// ═══════════════════════════════════════════════════════════
+function renderCompare() {
+  const el = document.getElementById('compare-content');
+  // Collect all towns from both counties
+  const allTowns = [
+    ...CD.cheshire.towns.map(t => ({...t, county:'cheshire'})),
+    ...CD.sullivan.towns.map(t => ({...t, county:'sullivan'}))
+  ].sort((a,b) => a.name.localeCompare(b.name));
+
+  const opts = allTowns.map(t =>
+    `<option value="${t.name}" data-county="${t.county}">${t.name} (${t.county==='cheshire'?'CH':'SU'})</option>`
+  ).join('');
+
+  el.innerHTML = `
+    <div class="sl">Town Comparison Tool</div>
+    <div class="ibox info" style="margin-bottom:14px"><strong>Side-by-side town comparison</strong>Select any two towns. Green = favorable metric, red = unfavorable. Win count shown on each card.</div>
+    <div class="cmp-pickers">
+      <select class="cmp-sel" id="cmp-a" onchange="renderCmpCards()">
+        <option value="">Select Town A</option>${opts}
+      </select>
+      <select class="cmp-sel" id="cmp-b" onchange="renderCmpCards()">
+        <option value="">Select Town B</option>${opts}
+      </select>
+    </div>
+    <div id="cmp-result"><div class="cmp-empty">Select two towns above to compare side by side</div></div>`;
+}
+
+function renderCmpCards() {
+  const an = document.getElementById('cmp-a').value;
+  const bn = document.getElementById('cmp-b').value;
+  const res = document.getElementById('cmp-result');
+  if (!an || !bn) { res.innerHTML = '<div class="cmp-empty">Select two towns above to compare</div>'; return; }
+  if (an === bn) { res.innerHTML = '<div class="cmp-empty">Please select two different towns</div>'; return; }
+
+  const allTowns = [...CD.cheshire.towns, ...CD.sullivan.towns];
+  const a = allTowns.find(t => t.name === an);
+  const b = allTowns.find(t => t.name === bn);
+  if (!a || !b) return;
+
+  // Metrics: [label, aVal, bVal, higherBetter, tooltip]
+  const metrics = [
+    ['Median Price', a.median, b.median, true, 'Higher indicates a stronger price market'],
+    ['Median DOM', a.dom+' days', b.dom+' days', false, 'Lower = faster market; homes go under contract sooner'],
+    ['List-to-Sale', a.lts, b.lts, true, 'Higher = sellers hold closer to ask; less room to negotiate'],
+    ['Sales Volume', a.sales, b.sales, true, 'More sales = more liquid market with better comparable data'],
+    ['Price / SqFt', a.ppsf, b.ppsf, true, 'Higher $/sqft = stronger per-foot demand'],
+  ];
+
+  // Parse numeric for comparison (strip $, commas, %)
+  function parseNum(s) {
+    if (typeof s === 'number') return s;
+    return parseFloat(String(s).replace(/[$,%a-zA-Z\s]/g,'')) || 0;
+  }
+
+  let aWins = 0, bWins = 0;
+  const compared = metrics.map(([label, av, bv, hb, ttip]) => {
+    const an = parseNum(av), bn2 = parseNum(bv);
+    const aWin = hb ? an > bn2 : an < bn2;
+    const bWin = hb ? bn2 > an : bn2 < an;
+    if (aWin) aWins++;
+    if (bWin) bWins++;
+    return {label, av, bv, aWin, bWin, ttip};
+  });
+
+  function card(town, isA, wins) {
+    const isWinner = wins > metrics.length / 2;
+    return `<div class="cmp-card ${isWinner ? 'winner' : ''}">
+      <div class="cmp-name">${isWinner ? '⭐ ' : ''}${town.name} <span style="font-size:10px;color:var(--mgray);font-weight:400">${wins}/${metrics.length} wins</span></div>
+      ${compared.map(m => {
+        const myWin = isA ? m.aWin : m.bWin;
+        const myLose = isA ? m.bWin : m.aWin;
+        return `<div class="cmp-metric">
+          <div class="cmp-ml">${m.label}${tip(m.ttip)}</div>
+          <div class="cmp-mv ${myWin?'better':myLose?'worse':''}">${isA ? m.av : m.bv} ${myWin?'✓':myLose?'':'='}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  res.innerHTML = `<div style="font-size:9px;color:var(--mgray);text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">✓ = more favorable · Green = better for that metric</div>
+    <div class="cmp-cards">${card(a, true, aWins)}${card(b, false, bWins)}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// V5 SHARE CARD
+// ═══════════════════════════════════════════════════════════
+function openShare(countyKey, townName) {
+  const d = countyKey ? CD[countyKey] : null;
+  const town = townName ? ([...CD.cheshire.towns,...CD.sullivan.towns].find(t=>t.name===townName)) : null;
+  const title = town ? townName : (d ? d.label : 'Both Counties');
+  const rangeLabel = curRange >= 12 ? '12-Month' : curRange + '-Month';
+  const period = curRange >= 12 ? 'Feb 2025 – Feb 2026' : (curRange === 6 ? 'Sep 2025 – Feb 2026' : 'Nov 2025 – Feb 2026');
+
+  let stats;
+  if (town) {
+    stats = [
+      {v: town.median, l: 'Median Price'},
+      {v: town.dom + ' days', l: 'Median DOM'},
+      {v: town.lts, l: 'Sale/List'},
+      {v: town.sales, l: 'Closed Sales'},
+    ];
+  } else if (d) {
+    const m = d.monthly;
+    const sliced = sliceMonthly(m, curRange);
+    const lastPrice = sliced.median[sliced.median.length-1];
+    const lastDom = Math.round(sliced.dom[sliced.dom.length-1]);
+    const totalSales = sliced.sales.reduce((a,b)=>a+b,0);
+    stats = [
+      {v: '$'+Math.round(lastPrice/1000)+'K', l: 'Median Price'},
+      {v: lastDom + ' days', l: 'Median DOM'},
+      {v: d.all.lts, l: 'Sale/List'},
+      {v: totalSales, l: 'Closed Sales'},
+    ];
+  } else {
+    stats = [
+      {v:'1,501', l:'Total Sales'},{v:'$365K / $356K', l:'CH / SU Median'},
+      {v:'12 / 18 days', l:'CH / SU DOM'},{v:'38', l:'Towns'},
+    ];
+  }
+
+  document.getElementById('share-card-inner').innerHTML = `
+    <div class="sc-eye">NH Market Intelligence</div>
+    <div class="sc-title">${title}</div>
+    <div class="sc-period">${rangeLabel} · ${period}</div>
+    <div class="sc-grid">
+      ${stats.map(s=>`<div class="sc-stat"><div class="sc-stat-v">${s.v}</div><div class="sc-stat-l">${s.l}</div></div>`).join('')}
+    </div>
+    <div class="sc-foot">Data: PrimeMLS · NHmarketintel.com · Southwest NH</div>`;
+
+  document.getElementById('share-overlay').classList.add('open');
+}
+function closeShare() { document.getElementById('share-overlay').classList.remove('open'); }
+
+
+let cid=0;
+function uid(){return 'id'+(++cid);}
+
+// ═══════════════════════════════════════════════════════════
+// CHART HELPERS
+// ═══════════════════════════════════════════════════════════
+function barChart(values,labels,color,tipFmt,h=100){
+  const max=Math.max(...values)||1;
+  return `<div class="bar-chart" style="height:${h}px">${values.map((v,i)=>{
+    const ht=Math.max(2,Math.round((v/max)*(h-10)));
+    return `<div class="bar-col"><div class="bar" style="height:${ht}px;background:${color};opacity:${0.45+0.55*(v/max)}" data-tip="${labels[i]}: ${tipFmt(v)}"></div><div class="bar-lbl">${(labels[i]||'').substring(0,3)}</div></div>`;
+  }).join('')}</div>`;
+}
+
+function lineChart(values,color,fmtFn,labels){
+  const min=Math.min(...values),max=Math.max(...values),range=max-min||1;
+  const W=340,H=90,p=10;
+  const pts=values.map((v,i)=>[p+(i/(values.length-1||1))*(W-p*2),H-p-((v-min)/range)*(H-p*2)]);
+  const id=uid();
+  const pathD=pts.map((pt,i)=>(i?'L':'M')+pt[0].toFixed(1)+','+pt[1].toFixed(1)).join(' ');
+  const area=pathD+` L${pts[pts.length-1][0]},${H} L${pts[0][0]},${H} Z`;
+  const dots=pts.map(([x,y],i)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${color}" stroke="white" stroke-width="1.5"><title>${labels?labels[i]:i}: ${fmtFn(values[i])}</title></circle>`).join('');
+  const up=values[values.length-1]>=values[0];
+  return `<div class="line-wrap"><svg class="lc" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity="0.15"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${area}" fill="url(#${id})"/>
+    <path d="${pathD}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}
+  </svg></div>
+  <div class="chart-footer"><span>${labels?labels[0]:'Start'}: <strong style="color:var(--navy)">${fmtFn(values[0])}</strong></span><span style="color:${up?'#15803d':'#b91c1c'};font-weight:700">${up?'▲':'▼'} ${fmtFn(values[values.length-1])}</span></div>`;
+}
+
+function donutChart(slices,size=110){
+  let start=0,paths='',total=slices.reduce((s,x)=>s+x.pct,0);
+  slices.forEach(s=>{
+    const angle=(s.pct/total)*360,end=start+angle,r=40,cx=55,cy=55;
+    const x1=cx+r*Math.cos((start-90)*Math.PI/180),y1=cy+r*Math.sin((start-90)*Math.PI/180);
+    const x2=cx+r*Math.cos((end-90)*Math.PI/180),y2=cy+r*Math.sin((end-90)*Math.PI/180);
+    paths+=`<path d="M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${angle>180?1:0} 1 ${x2.toFixed(2)},${y2.toFixed(2)} Z" fill="${s.color}" opacity="0.9"><title>${s.label}: ${s.pct}%</title></path>`;
+    start=end;
+  });
+  return `<svg class="donut-svg" width="${size}" height="${size}" viewBox="0 0 110 110"><circle cx="55" cy="55" r="24" fill="white"/>${paths}<circle cx="55" cy="55" r="24" fill="white"/></svg>`;
+}
+
+function fmt$(n){return '$'+Math.round(n).toLocaleString();}
+function fmtPct(n){return n.toFixed(1)+'%';}
+
+// ═══════════════════════════════════════════════════════════
+// KPI SPOTLIGHT
+// ═══════════════════════════════════════════════════════════
+function openSpot(metric,county,townData){
+  const d=townData||CD[county];
+  // Pick monthly source: town uses town monthly, county uses ptype-specific monthly
+  let rawMonthly;
+  if(townData){
+    rawMonthly=d.monthly;
+  } else {
+    const mk = curPtype==='all' ? 'monthly'
+      : curPtype==='sf'     ? 'monthly_sf'
+      : curPtype==='mobile' ? 'monthly_mobile'
+      : curPtype==='condo'  ? 'monthly_condo'
+      : 'monthly';
+    rawMonthly = CD[county][mk];
+  }
+  const m=sliceMonthly(rawMonthly, townData ? 12 : curRange);
+  const color=townData?(townData.county==='cheshire'?'#1d5fa8':'#c2410c'):CD[county].color;
+  const label=townData?townData._name:CD[county].label;
+  const months=m.months||(townData?MO:getMO());
+  const cfgs={
+    median:{title:'Median Sale Price',sub:'Monthly trend · '+label,chart:()=>`<div class="chart-wrap" style="margin:0">${lineChart(m.median,color,fmt$,months)}</div>`,insight:()=>{const mx=Math.max(...m.median),mn=Math.min(...m.median),mxi=m.median.indexOf(mx),mni=m.median.indexOf(mn);return `Peak: ${months[mxi]} at ${fmt$(mx)}. Low: ${months[mni]} at ${fmt$(mn)}. Range: ${fmt$(mx-mn)}.`;}},
+    sales:{title:'Monthly Closed Sales',sub:'Volume by month · '+label,chart:()=>`<div class="chart-wrap" style="margin:0">${barChart(m.sales,months,color,v=>v+' sales')}</div>`,insight:()=>{const mx=Math.max(...m.sales),mxi=m.sales.indexOf(mx);return `Peak: ${months[mxi]} with ${mx} sales. 12-month total: ${m.sales.reduce((a,b)=>a+b,0)}.`;}},
+    dom:{title:'Median Days on Market',sub:'Monthly trend · '+label,chart:()=>`<div class="chart-wrap" style="margin:0">${lineChart(m.dom,'#15803d',v=>Math.round(v)+' days',months)}</div>`,insight:()=>{const mn=Math.min(...m.dom),mx=Math.max(...m.dom),mni=m.dom.indexOf(mn),mxi=m.dom.indexOf(mx);return `Fastest: ${months[mni]} at ${Math.round(mn)} days. Slowest: ${months[mxi]} at ${Math.round(mx)} days.`;}},
+    lts:{title:'List-to-Sale Ratio',sub:'Monthly trend · '+label,chart:()=>`<div class="chart-wrap" style="margin:0">${lineChart(m.lts,'#6d28d9',fmtPct,months)}</div>`,insight:()=>{const over=m.lts.filter(v=>v>=100).length;return `${over} of ${m.lts.length} months had median ratios at or above 100%. Current: ${m.lts[m.lts.length-1].toFixed(1)}%.`;}},
+    ppsf:{title:'Median Price Per Sq Ft',sub:'Single Family · '+label,chart:()=>`<div class="chart-wrap" style="margin:0">${lineChart(m.ppsf,color,v=>'$'+Math.round(v),months)}</div>`,insight:()=>{const mx=Math.max(...m.ppsf),mn=Math.min(...m.ppsf);return `Peak: $${Math.round(mx)}/sqft. Low: $${Math.round(mn)}/sqft. A ${Math.round((mx-mn)/mn*100)}% swing peak to trough.`;}},
+    overask:{title:'Over-Asking Sales Rate',sub:'% of sales above list · '+label,chart:()=>`<div class="chart-wrap" style="margin:0">${lineChart(m.overask,'#c8941a',fmtPct,months)}</div>`,insight:()=>{const mx=Math.max(...m.overask),mxi=m.overask.indexOf(mx),last=m.overask[m.overask.length-1];return `Peak: ${mx.toFixed(1)}% in ${months[mxi]}. Current: ${last.toFixed(1)}%. ${last<mx*0.5?'Significant demand cooling from peak.':'Competitive conditions persist.'}`;}},
+    reduction:{title:'Price Reduction Rate',sub:'% of listings with cuts · '+label,chart:()=>`<div class="chart-wrap" style="margin:0">${lineChart(m.reduction,'#b91c1c',fmtPct,months)}</div>`,insight:()=>{const mn=Math.min(...m.reduction),mni=m.reduction.indexOf(mn),last=m.reduction[m.reduction.length-1];return `Lowest rate: ${mn.toFixed(1)}% in ${months[mni]}. Current: ${last.toFixed(1)}%. Rising = sellers need to adjust pricing.`;}},
+    dtc:{title:'Days to Close',sub:'Contract to closing · '+label,chart:()=>`<div class="chart-wrap" style="margin:0">${lineChart(m.dtc,'#0891b2',v=>Math.round(v)+' days',months)}</div>`,insight:()=>{const avg=Math.round(m.dtc.reduce((a,b)=>a+b,0)/m.dtc.length);return `Median ${avg} days contract to close. Cash transactions typically close 2–3 weeks faster than financed.`;}},
+  };
+  const cfg=cfgs[metric]; if(!cfg) return;
+  document.getElementById('spot-title').textContent=cfg.title;
+  document.getElementById('spot-sub').textContent=cfg.sub;
+  document.getElementById('spot-body').innerHTML=cfg.chart()+'<div class="spot-insight">💡 '+cfg.insight()+'</div>';
+  document.getElementById('spot-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSpot(e){if(e.target===document.getElementById('spot-overlay'))closeSpotBtn();}
+function closeSpotBtn(){document.getElementById('spot-overlay').classList.remove('open');document.body.style.overflow='';}
+
+// KPI CARD
+const KPI_TIPS = {
+  median: 'The middle sale price – half of homes sold above, half below. Resistant to outlier distortion.',
+  sales: 'Total number of properties that closed during the period.',
+  dom: 'Days from original MLS list date to accepted contract. Lower = stronger seller conditions.',
+  lts: 'Sale price ÷ final list price. At or above 100% = buyers paid asking or above.',
+  ppsf: 'Median (sale price ÷ above-grade sq ft). Basement excluded per appraisal methodology.',
+  overask: '% of closed sales where final price exceeded final list price. Declining = softening demand.',
+  reduction: '% of sold listings that had at least one price cut before going under contract.',
+  dtc: 'Calendar days from accepted contract to closing. Reflects financing timelines and complexity.',
+};
+function kpiCard(val,lbl,note,metric,cls='',cty){
+  const county=cty||curCounty;
+  const tipHtml = KPI_TIPS[metric] ? tip(KPI_TIPS[metric]) : '';
+  return `<div class="kpi ${cls}" onclick="openSpot('${metric}','${county}')"><span class="kpi-tap">tap for chart</span><div class="kpi-l">${lbl}${tipHtml}</div><div class="kpi-v">${val}</div>${note?`<div class="kpi-n">${note}</div>`:''}</div>`;
+}
+function kpiCardTown(val,lbl,note,metric,townKey,cls=''){
+  const td=TOWNS[townKey];
+  if(!td) return `<div class="kpi ${cls}"><div class="kpi-l">${lbl}</div><div class="kpi-v">${val}</div>${note?`<div class="kpi-n">${note}</div>`:''}</div>`;
+  const ttip = KPI_TIPS[metric] ? tip(KPI_TIPS[metric]) : '';
+  return `<div class="kpi ${cls}" onclick="openSpotTown('${metric}','${townKey}')"><span class="kpi-tap">tap for chart</span><div class="kpi-l">${lbl}${ttip}</div><div class="kpi-v">${val}</div>${note?`<div class="kpi-n">${note}</div>`:''}</div>`;
+}
+function openSpotTown(metric,townKey){openSpot(metric,null,{...TOWNS[townKey],_name:townKey});}
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function setCounty(c,el){curCounty=c;document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));el.classList.add('active');render();}
+function setPage(p,el){curPage=p;document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('active'));document.getElementById('panel-'+p).classList.add('active');el.classList.add('active');render();}
+function setPtype(t,el){curPtype=t;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));el.classList.add('active');render();}
+function render(){
+  if(curPage==='overview') renderOverview();
+  else if(curPage==='trends') renderTrends();
+  else if(curPage==='market') renderMarket();
+  else if(curPage==='bands')  renderBands();
+  else if(curPage==='towns')  renderTowns();
+  else if(curPage==='compare') renderCompare();
+}
+
+function renderOverview(){
+  const el=document.getElementById('overview-content');
+  const mo=getMO();
+  if(curCounty==='both'){
+    const c=CD.cheshire[curPtype],s=CD.sullivan[curPtype];
+    const perspNote = curPersp!=='neutral' ? `<div class="ibox ${curPersp==='seller'?'success':'info'}"><strong>${curPersp==='seller'?'📈 Seller View':'🏡 Buyer View'}</strong>${curPersp==='seller'?'Cheshire\'s 36.6% over-asking rate is nearly 11 points above Sullivan. Properly priced listings in either county are moving within 2–3 weeks.':'Sullivan\'s lower list-to-sale (99.2%) vs Cheshire (100%) gives buyers slightly more room. Cash competition is high in both – pre-approval is essential.'}</div>` : '';
+    el.innerHTML=`${perspBanner()}<div class="sl">Side-by-Side · 12-Month</div>
+    <div class="ctbl"><div class="crow ch"><div class="ccell">Metric</div><div class="ccell cc" style="text-align:right">Cheshire</div><div class="ccell sc" style="text-align:right">Sullivan</div></div>
+    ${[['Median Sale Price',c.median,s.median],['Closed Sales',c.sales,s.sales],['Median DOM',c.dom+' days',s.dom+' days'],['List-to-Sale',c.lts,s.lts],['Price / SqFt',c.ppsf,s.ppsf],['Over-Asking Rate',c.overask,s.overask],['Price Reduction Rate',c.reduction,s.reduction],['Days to Close',c.dtc+' days',s.dtc+' days']].map(([l,cv,sv])=>`<div class="crow"><div class="ccell c-metric">${l}</div><div class="ccell c-val cheshire">${cv}</div><div class="ccell c-val sullivan">${sv}</div></div>`).join('')}
+    </div>
+    ${perspNote}
+    <div class="ibox info"><strong>📄¹ Key Difference</strong>Cheshire's over-asking rate (36.6%) is nearly 11 points higher than Sullivan's (25.3%). Sullivan's higher price reduction rate (30.1% vs 26.9%) signals more pricing correction pressure on sellers.</div>
+    <button onclick="openShare(null,null)" style="width:100%;padding:11px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">📱 Share Market Card</button>`;
+    setTimeout(()=>applySelectables(el,'both'),50);
+    return;
+  }
+  const d=CD[curCounty];
+  const m=getKpiValues(curCounty, curPtype, curRange);
+  const mSliced=sliceMonthly(d.monthly,curRange);
+  const ptl=curPtype==='all'?'All Types':curPtype==='sf'?'Single Family':curPtype==='mobile'?'Mobile Home':'Condo';
+  const lowVolNote = m._lowVol
+    ? `<div class="ibox warn" style="margin-bottom:10px"><strong>⚠️ Low volume – interpret with caution</strong>Only ${m.sales} sales in this ${curRange}-month window for ${ptl}. Medians on thin slices can shift significantly with a single transaction.</div>` : '';
+  const perspKey = curPersp!=='neutral' ? `overview_${curCounty}` : null;
+  const perspInsightHtml = perspKey && PERSP_COPY[curPersp] && PERSP_COPY[curPersp][perspKey]
+    ? `<div class="ibox ${curPersp==='seller'?'success':'info'}"><strong>${curPersp==='seller'?'📈 Seller View':'🏡 Buyer View'}</strong>${PERSP_COPY[curPersp][perspKey]}</div>` : '';
+  const periodLabel = curRange>=12?'Feb 2025 – Feb 2026':curRange===6?'Sep 2025 – Feb 2026':'Nov 2025 – Feb 2026';
+  const salesNote = curRange<12 ? curRange+'-month total' : '12-month total';
+  // Chart always uses all-types monthly for the volume bar (ptype monthly is too thin for some bars)
+  const chartMonthly = curPtype==='all' ? mSliced : sliceMonthly(d['monthly_'+curPtype.replace('sf','sf').replace('mobile','mobile').replace('condo','condo')] || d.monthly, curRange);
+  el.innerHTML=`
+    ${perspBanner()}
+    ${lowVolNote}
+    <div class="sl">KPIs · ${d.label} · ${ptl} · ${curRange}mo <span style="font-size:8px;color:var(--mgray);font-style:italic">· Tap tile for chart</span></div>
+    <div class="kpi-grid">
+      <div class="kpi gold kpi-wide" onclick="openSpot('median','${curCounty}')"><span class="kpi-tap">tap for chart</span><div class="kpi-l">Median Sale Price${tip('The middle value of all closed sale prices. Half sold above, half below.')}</div><div class="kpi-v lg">${m.median}</div><div class="kpi-n">${periodLabel} · ${ptl}</div></div>
+    </div>
+    <div class="kpi-grid">
+      ${kpiCard(typeof m.sales==='number'?m.sales.toLocaleString():m.sales,'Closed Sales',salesNote,'sales')}
+      ${kpiCard(m.dom,'Median DOM',curRange<12?curRange+'-month avg':'Days to contract','dom','green')}
+      ${kpiCard(m.lts,'List-to-Sale Ratio',curRange<12?curRange+'-month avg':'Median · final list','lts')}
+      ${kpiCard(m.ppsf,'Median Price / SqFt',curRange<12?curRange+'-month avg':'Above-grade SF only','ppsf')}
+    </div>
+    <div class="sl">Market Conditions <span style="font-size:8px;color:var(--mgray);font-style:italic">· Tap tile for chart</span></div>
+    <div class="kpi-grid">
+      ${kpiCard(m.overask,'Over-Asking Rate',curRange<12?'Wgtd avg in range':'Sales above list price','overask','gold')}
+      ${kpiCard(m.reduction,'Price Reduction Rate',curRange<12?'Wgtd avg in range':'Listings with cuts','reduction','red')}
+      ${kpiCard((m.dtc||'–')+' days','Days to Close',curRange<12?curRange+'-month avg':'Contract to closing','dtc','purple')}
+    </div>
+    ${perspInsightHtml}
+    <div class="sl">Monthly Sales Volume · ${curRange}mo <span style="font-size:8px;color:var(--gold);font-style:italic">· ☑ check to add to PDF</span></div>
+    <div class="chart-wrap selectable" onclick="openSpot('sales','${curCounty}')" style="cursor:pointer">
+      <div class="chart-title">Closed Sales by Month · ${ptl}<span class="chart-sub">Tap for month-by-month detail</span></div>
+      ${barChart(chartMonthly.sales,getMO(),d.color,v=>v+' sales')}
+    </div>
+    <div class="ibox info"><strong>📊 Market Snapshot</strong>${curCounty==='cheshire'?'Peak month August 2025 (104 sales). Over-asking rate of 36.6% reflects strong buyer competition. Price reduction rate rising in winter months signals typical seasonal pricing pressure.':'Peak October 2025 (65 sales). At 25.3% over-asking, Sullivan is less competitive than Cheshire but still firmly a seller\'s market. FHA at 8.7% reflects diverse buyer pool.'}</div>
+    <button onclick="openShare('${curCounty}',null)" style="width:100%;padding:11px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px;">📱 Share Market Card</button>`;
+  setTimeout(()=>applySelectables(el,curCounty),50);
+}
+
+function renderTrends(){
+  const el=document.getElementById('trends-content');
+  const mo=getMO();
+  if(curCounty==='both'){
+    const c=sliceMonthly(CD.cheshire.monthly,curRange);
+    const s=sliceMonthly(CD.sullivan.monthly,curRange);
+    el.innerHTML=`
+      <div class="sl">Median Sale Price · ${curRange}mo</div>
+      <div class="chart-wrap"><div class="chart-title">Cheshire – Median Sale Price<span class="chart-sub">Monthly closes</span></div>${lineChart(c.median,'#1d5fa8',fmt$,mo)}</div>
+      <div class="chart-wrap"><div class="chart-title">Sullivan – Median Sale Price<span class="chart-sub">Monthly closes</span></div>${lineChart(s.median,'#c2410c',fmt$,mo)}</div>
+      <div class="sl">Over-Asking Rate</div>
+      <div class="chart-wrap"><div class="chart-title">Cheshire – Over-Asking Rate<span class="chart-sub">% of sales above list price</span></div>${lineChart(c.overask,'#1d5fa8',fmtPct,mo)}</div>
+      <div class="chart-wrap"><div class="chart-title">Sullivan – Over-Asking Rate<span class="chart-sub">% of sales above list price</span></div>${lineChart(s.overask,'#c2410c',fmtPct,mo)}</div>
+      <div class="sl">Monthly Sales Volume</div>
+      <div class="chart-wrap"><div class="chart-title">Cheshire – Monthly Sales</div>${barChart(c.sales,mo,'#1d5fa8',v=>v+' sales')}</div>
+      <div class="chart-wrap"><div class="chart-title">Sullivan – Monthly Sales</div>${barChart(s.sales,mo,'#c2410c',v=>v+' sales')}</div>`;
+    setTimeout(()=>applySelectables(el,'both'),50);
+    return;
+  }
+  const d=CD[curCounty];
+  const m=sliceMonthly(d.monthly,curRange);
+  el.innerHTML=`
+    ${perspBanner()}
+    <div class="sl">Price Trend · ${d.label} · ${curRange}mo</div>
+    <div class="chart-wrap"><div class="chart-title">${curRange}-Month Median Sale Price<span class="chart-sub">Monthly closes</span></div>${lineChart(m.median,d.color,fmt$,mo)}</div>
+    <div class="sl">Sales Volume</div>
+    <div class="chart-wrap"><div class="chart-title">Monthly Closed Sales</div>${barChart(m.sales,mo,d.color,v=>v+' sales')}</div>
+    <div class="sl">Market Demand Signals</div>
+    <div class="chart-wrap"><div class="chart-title">Over-Asking Rate<span class="chart-sub">% of sales above final list price</span></div>${lineChart(m.overask,'#c8941a',fmtPct,mo)}</div>
+    <div class="chart-wrap"><div class="chart-title">Price Reduction Rate<span class="chart-sub">% of listings with price cuts before sale</span></div>${lineChart(m.reduction,'#b91c1c',fmtPct,mo)}</div>
+    <div class="sl">Speed &amp; Efficiency</div>
+    <div class="chart-wrap"><div class="chart-title">Median Days on Market<span class="chart-sub">List to contract</span></div>${lineChart(m.dom,'#15803d',v=>Math.round(v)+' days',mo)}</div>
+    <div class="chart-wrap"><div class="chart-title">Days to Close<span class="chart-sub">Contract to closing</span></div>${lineChart(m.dtc,'#0891b2',v=>Math.round(v)+' days',mo)}</div>
+    <div class="chart-wrap"><div class="chart-title">Median Price Per Sq Ft<span class="chart-sub">Single Family · above-grade</span></div>${lineChart(m.ppsf,d.color,v=>'$'+Math.round(v),mo)}</div>
+    <div class="ibox warn"><strong>⚠️ Feb 2026</strong>February 2026 data is partial through Feb 17.</div>`;
+  setTimeout(()=>applySelectables(el,curCounty),50);
+}
+
+// ═══════════════════════════════════════════════════════════
+// MARKET HEALTH
+// ═══════════════════════════════════════════════════════════
+function renderMarket(){
+  const el=document.getElementById('market-content');
+  if(curCounty==='both'){
+    let html=`<div class="sl">Buyer Financing · Both Counties</div>`;
+    ['cheshire','sullivan'].forEach(cty=>{
+      const dd=CD[cty];
+      html+=`<div class="chart-wrap"><div class="chart-title">${dd.label} – Financing Mix<span class="chart-sub">12-month closed sales</span></div>
+        <div class="donut-wrap">${donutChart(dd.financing)}<div class="donut-legend">${dd.financing.map(f=>`<div class="dl-row"><div class="dl-dot" style="background:${f.color}"></div><span class="dl-label">${f.label}</span><span class="dl-pct">${f.pct}%</span></div>`).join('')}</div></div></div>`;
+    });
+    html+=`<div class="ibox info"><strong>💰 Cash Buyers</strong>Cash transactions represent 35.1% in Cheshire and 33.6% in Sullivan – significantly above national averages. Always confirm buyer financing before advising on offer strategy.</div>`;
+    el.innerHTML=html;
+    setTimeout(()=>applySelectables(el,'both'),50);
+    return;
+  }
+  const d=CD[curCounty];
+  const maxBedC=Math.max(...d.bedrooms.map(b=>b.count));
+  const maxDecP=Math.max(...d.decades.map(x=>x.pct));
+  const maxSeaS=Math.max(...d.seasonal.sales);
+
+  let html=`
+    ${perspBanner()}
+    <div class="sl">Buyer Financing · ${d.label}</div>
+    <div class="chart-wrap"><div class="chart-title">Financing Type Breakdown<span class="chart-sub">12-month closed sales</span></div>
+      <div class="donut-wrap">${donutChart(d.financing)}<div class="donut-legend">${d.financing.map(f=>`<div class="dl-row"><div class="dl-dot" style="background:${f.color}"></div><span class="dl-label">${f.label}</span><span class="dl-pct">${f.pct}%</span></div>`).join('')}</div></div>
+    </div>
+    <div class="ibox info"><strong>💰 Cash is King Here</strong>${curCounty==='cheshire'?'35.1% cash – well above national average. In competitive situations, agents should know their buyer\'s financing before advising on strategy. VA at 6.3% signals meaningful veteran buyer presence.':'33.6% cash. FHA at 8.7% reflects more first-time and lower-down-payment buyers. VA at 6.9% notable for a rural market.'}</div>
+    <div class="sl">Bedroom Price Ladder · ${d.label}</div>
+    <div class="bed-ladder">
+      <div class="bl-row hdr"><div class="bl-cell">Bedrooms</div><div class="bl-cell">Volume</div><div class="bl-cell">Median Price</div></div>
+      ${d.bedrooms.map(b=>`<div class="bl-row"><div class="bl-cell bl-beds">${b.beds}</div><div class="bl-cell bl-bar-wrap"><div class="bl-bar-bg"><div class="bl-bar-fill" style="width:0%" data-w="${Math.round((b.count/maxBedC)*100)}%"></div></div><span style="font-size:9px;color:var(--mgray)">${b.count} sales</span></div><div class="bl-cell bl-price">${fmt$(b.median)}</div></div>`).join('')}
+    </div>
+    <div class="sl">Housing Stock Age · Single Family</div>
+    <div class="decade-chart">
+      <div class="chart-title">Sales by Construction Era<span class="chart-sub">When the homes that sold were built</span></div>
+      ${d.decades.map(dc=>`<div class="decade-row"><div class="decade-label">${dc.era}</div><div class="decade-bg"><div class="decade-fill" style="width:0%" data-w="${(dc.pct/maxDecP)*100}%"></div></div><div class="decade-cnt">${dc.count} (${dc.pct}%)</div></div>`).join('')}
+    </div>
+    <div class="ibox info"><strong>🏡 Stock Age</strong>${curCounty==='cheshire'?'34.2% of sales were pre-1950 homes – oldest stock in the two-county area. Only 7.5% were built 2010 or later. Renovation and disclosure complexity built into the market.':'35% pre-1950, plus a notable 1970s–80s cluster at 27.4%. The 1990s–2000s era is unusually well-represented at 21.5%.'}</div>
+    <div class="sl">Seasonal Sales Pattern · ${d.label}</div>
+    <div class="chart-wrap"><div class="chart-title">Sales Volume by Calendar Month<span class="chart-sub">Annual pattern – use for timing conversations</span></div>${barChart(d.seasonal.sales,CAL_MO,d.color,v=>v+' sales')}</div>
+    <div class="chart-wrap"><div class="chart-title">Median Price by Calendar Month<span class="chart-sub">Seasonal price variation</span></div>${lineChart(d.seasonal.median,d.color,fmt$,CAL_MO)}</div>
+    <div class="ibox info"><strong>📄¦ Timing Insight</strong>${curCounty==='cheshire'?'June–October is peak season, 97–104 sales/month. January floors at 41. Sellers wanting maximum competition should target a spring list date.':'July–October shows strongest activity. Buyers in winter face less competition – a strategic advantage for purchase-focused clients.'}</div>
+    ${curPersp!=='neutral'?`<div class="ibox ${curPersp==='seller'?'success':'info'}"><strong>${curPersp==='seller'?'📈 Seller Timing Note':'🏡 Buyer Timing Note'}</strong>${PERSP_COPY[curPersp].market_timing}</div>`:''}
+    <button onclick="openShare('${curCounty==='both'?'cheshire':curCounty}',null)" style="width:100%;padding:11px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px;">📱 Share Market Card</button>`;
+
+  el.innerHTML=html;
+  setTimeout(()=>{
+    el.querySelectorAll('[data-w]').forEach(b=>{b.style.width=b.dataset.w;});
+    applySelectables(el,curCounty);
+  },80);
+}
+
+// ═══════════════════════════════════════════════════════════
+// BANDS
+// ═══════════════════════════════════════════════════════════
+function renderBands(){
+  const el=document.getElementById('bands-content');
+  const both=curCounty==='both';
+  const cb=CD.cheshire.bands,sb=CD.sullivan.bands;
+  const maxP=both?Math.max(...cb.map(b=>b.pct),...sb.map(b=>b.pct)):Math.max(...CD[curCounty].bands.map(b=>b.pct));
+  let html=`<div class="sl">Price Band Distribution · ${both?'Both Counties':CD[curCounty].label} · All Types</div>`;
+  if(both){
+    html+=`<div class="ibox info"><strong>Blue = Cheshire · Orange = Sullivan</strong>Bar width = % of that county's sales in the band.</div>`;
+    cb.forEach((b,i)=>{const s=sb[i];html+=`<div class="band"><div class="band-top"><span class="band-name">${b.name}</span><div class="band-pills"><span class="bpill c">${b.count}</span><span class="bpill s">${s.count}</span></div></div><div class="band-bars"><div class="bbar-row"><span class="bbar-lbl" style="color:#1d5fa8;font-size:8px;font-weight:700">CH</span><div class="bbar-bg"><div class="bbar-fill c" style="width:0%" data-w="${(b.pct/maxP)*100}%"></div></div><span class="bbar-pct">${b.pct}%</span></div><div class="bbar-row"><span class="bbar-lbl" style="color:#c2410c;font-size:8px;font-weight:700">SU</span><div class="bbar-bg"><div class="bbar-fill s" style="width:0%" data-w="${(s.pct/maxP)*100}%"></div></div><span class="bbar-pct">${s.pct}%</span></div></div></div>`;});
+  } else {
+    const bands=CD[curCounty].bands,cls=curCounty==='cheshire'?'c':'s';
+    bands.forEach(b=>{html+=`<div class="band"><div class="band-top"><span class="band-name">${b.name}</span><span class="bpill g">${b.count} sales</span></div><div class="band-bars"><div class="bbar-row"><div class="bbar-bg"><div class="bbar-fill ${cls}" style="width:0%" data-w="${(b.pct/maxP)*100}%"></div></div><span class="bbar-pct">${b.pct}%</span></div></div></div>`;});
+  }
+  el.innerHTML=html;
+  setTimeout(()=>{el.querySelectorAll('.bbar-fill').forEach(f=>{f.style.width=f.dataset.w;});},80);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOWNS
+// ═══════════════════════════════════════════════════════════
+function renderTowns(){
+  const el=document.getElementById('towns-content');
+  let towns=[];
+  if(curCounty==='both'){
+    const c=CD.cheshire.towns.map(t=>({...t,cls:'c',cName:'Cheshire'}));
+    const s=CD.sullivan.towns.map(t=>({...t,cls:'s',cName:'Sullivan'}));
+    towns=[...c,...s].sort((a,b)=>b.sales-a.sales);
+  } else {
+    towns=CD[curCounty].towns.map(t=>({...t,cls:curCounty==='cheshire'?'c':'s'}));
+  }
+  const html=towns.map(t=>{
+    const low=t.sales<10,hasFull=!!TOWNS[t.name];
+    const cBadge=curCounty==='both'?` <span style="font-size:9px;opacity:.5">${t.cName}</span>`:'';
+    return `<div class="town-card" onclick="openTown('${t.name}')">
+      <div class="thdr ${t.cls}"><div class="tnw"><span class="tname">${t.name}${cBadge}</span><span class="ttap">tap for detail</span></div><span class="tbadge ${hasFull?'full':low?'warn':'ok'}">${hasFull?'Full Page':t.sales+' sales'}</span></div>
+      ${low&&!hasFull?'<div class="town-warn-bar">⚠️ Low volume – interpret with caution</div>':''}
+      ${hasFull?'<div class="town-full-bar">✅ Full town report with charts</div>':''}
+      <div class="tmetrics">
+        <div class="tm"><div class="tm-v">${t.median}</div><div class="tm-l">Median Price</div></div>
+        <div class="tm"><div class="tm-v">${t.dom}</div><div class="tm-l">Med DOM</div></div>
+        <div class="tm"><div class="tm-v">${t.lts}</div><div class="tm-l">List/Sale</div></div>
+        <div class="tm"><div class="tm-v">${t.ppsf}</div><div class="tm-l">$/SqFt</div></div>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML=`
+    <div class="sl">${curCounty==='both'?'All 38 Towns':CD[curCounty].label+' Towns'} · Tap for Detail</div>
+    <div class="ibox success"><strong>✅ Tap any town for its detail page</strong>All 38 towns have full data reports with clickable KPI charts.</div>
+    ${html}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOWN MODAL
+// ═══════════════════════════════════════════════════════════
+function openTown(name){
+  _curTownName=name;
+  const td=TOWNS[name];
+  const county=td?td.county:(CD.cheshire.towns.find(t=>t.name===name)?'cheshire':'sullivan');
+  const cLabel=county==='cheshire'?'Cheshire County':'Sullivan County';
+  const ey=document.getElementById('t-eyebrow');
+  ey.textContent=cLabel+' · Town Report'; ey.className='t-meyebrow '+(county==='cheshire'?'c':'s');
+  document.getElementById('t-name').textContent=name;
+  const cty=[...CD.cheshire.towns,...CD.sullivan.towns].find(t=>t.name===name);
+  document.getElementById('t-sub').textContent=`${td.sales} closed sales · Full Report`;
+  buildFullTown(td,name,county);
+    document.getElementById('town-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function buildFullTown(td,name,county){
+  const _pb=document.getElementById('town-pdf-btn');
+  if(_pb){const _si='town_snap_'+name.toLowerCase().replace(/\s+/g,'_');_pb.innerHTML=pdfItems[_si]?'✅ Added to PDF':'📋 Add Town to PDF';_pb.classList.toggle('added',!!pdfItems[_si]);}
+  const color=county==='cheshire'?'#1d5fa8':'#c2410c';
+  const cls=county==='cheshire'?'c':'s';
+  const lowVol=td.sales<10;
+  const m=td.monthly;
+  const maxBedC=Math.max(...td.bedrooms.map(b=>b.count));
+  const maxDecP=Math.max(...td.decades.map(d=>d.pct));
+  const maxBandP=Math.max(...td.bands.map(b=>b.pct));
+
+  document.getElementById('t-tabs').innerHTML=['Overview','Trends','Bands','Profile'].map((t,i)=>
+    `<div class="t-mtab${i===0?' active':''}" onclick="showTownTab('${t.toLowerCase()}',this)">${t}</div>`
+  ).join('');
+
+  const ovHtml=`
+    ${lowVol?`<div class="ibox warn"><strong>⚠️ Very Low Volume (${td.sales} sales)</strong>Metrics are directional only. Interpret with significant caution.</div>`:''}
+    <div class="sl">Key Metrics · Tap for Chart</div>
+    <div class="kpi-grid">
+      <div class="kpi gold kpi-wide" onclick="openSpotTown('median','${name}')"><span class="kpi-tap">tap for chart</span><div class="kpi-l">Median Sale Price</div><div class="kpi-v lg">${td.median}</div><div class="kpi-n">${td.sales} sales · ${td.priceMin} – ${td.priceMax}</div></div>
+    </div>
+    <div class="kpi-grid">
+      ${kpiCardTown(td.dom,'Median DOM','Days to contract','dom',name,'green')}
+      ${kpiCardTown(td.lts,'List-to-Sale','Median ratio','lts',name)}
+      ${kpiCardTown(td.ppsf,'Price / SqFt','Above-grade','ppsf',name)}
+      ${kpiCardTown(td.avg,'Avg Sale Price','vs median','sales',name)}
+    </div>
+    <div class="sl">Market Conditions</div>
+    <div class="kpi-grid">
+      ${kpiCardTown(td.overask,'Over-Asking Rate','Sales above list','overask',name,'gold')}
+      ${kpiCardTown(td.reduction,'Price Reduction Rate','Listings with cuts','reduction',name,'red')}
+      ${kpiCardTown(td.dtc+' days','Days to Close','Contract to close','dtc',name,'purple')}
+    </div>
+    <div class="sl">Property Detail</div>
+    <div class="stat-row">
+      <div class="sri"><span class="sri-l">Price Range</span><span class="sri-v">${td.priceMin} – ${td.priceMax}</span></div><div class="srd"></div>
+      <div class="sri"><span class="sri-l">Median Square Footage</span><span class="sri-v">${td.sqft.toLocaleString()} sq ft</span></div><div class="srd"></div>
+      <div class="sri"><span class="sri-l">Median Year Built</span><span class="sri-v">${td.yearBuilt}</span></div><div class="srd"></div>
+      <div class="sri"><span class="sri-l">Median Lot Size</span><span class="sri-v">${td.lotAcres}</span></div><div class="srd"></div>
+      <div class="sri"><span class="sri-l">Orig List-to-Sale</span><span class="sri-v">${td.origToSale}</span></div>
+    </div>
+    <div class="ibox info"><strong>📊 Analyst Notes</strong>${td.notes}</div>
+    <button onclick="openShare(null,'${name}')" style="width:100%;padding:10px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px;">📱 Share ${name} Card</button>`;
+
+  const trHtml=`
+    <div class="sl">Monthly Sales</div>
+    <div class="chart-wrap"><div class="chart-title">Closed Sales by Month</div>${barChart(m.sales,m.months,color,v=>v+' sales')}</div>
+    <div class="sl">Price Trend</div>
+    <div class="chart-wrap"><div class="chart-title">Median Sale Price<span class="chart-sub">Monthly closes</span></div>${lineChart(m.median,color,fmt$,m.months)}</div>
+    <div class="sl">Market Demand</div>
+    <div class="chart-wrap"><div class="chart-title">Over-Asking Rate</div>${lineChart(m.overask,'#c8941a',fmtPct,m.months)}</div>
+    <div class="chart-wrap"><div class="chart-title">Price Reduction Rate</div>${lineChart(m.reduction,'#b91c1c',fmtPct,m.months)}</div>
+    <div class="sl">Speed</div>
+    <div class="chart-wrap"><div class="chart-title">Median Days on Market</div>${lineChart(m.dom,'#15803d',v=>Math.round(v)+' days',m.months)}</div>
+    <div class="chart-wrap"><div class="chart-title">Price Per Sq Ft</div>${lineChart(m.ppsf,color,v=>'$'+Math.round(v),m.months)}</div>
+    ${lowVol?`<div class="ibox warn"><strong>⚠️ Low Volume</strong>Only ${td.sales} total sales across ${m.months.length} months. Treat as directional only.</div>`:''}`;
+
+  const bnHtml=`
+    <div class="sl">Price Band Distribution</div>
+    <div class="ibox info"><strong>${td.sales} Total Sales · ${name}</strong>Distribution across price ranges – useful for listing presentations.</div>
+    ${td.bands.map(b=>`<div class="band"><div class="band-top"><span class="band-name">${b.name}</span><span class="bpill g">${b.count} sale${b.count!==1?'s':''}</span></div><div class="band-bars"><div class="bbar-row"><div class="bbar-bg"><div class="bbar-fill ${cls}" style="width:0%" data-w="${(b.pct/maxBandP)*100}%"></div></div><span class="bbar-pct">${b.pct}%</span></div></div></div>`).join('')}`;
+
+  const prHtml=`
+    <div class="sl">Property Types</div>
+    <div class="stat-row">${Object.entries(td.propTypes).map(([k,v])=>{const l={sf:'Single Family',mobile:'Mobile Home',condo:'Condo'};return `<div class="sri"><span class="sri-l">${l[k]||k}</span><span class="sri-v">${v} (${Math.round(v/td.sales*100)}%)</span></div><div class="srd"></div>`;}).join('')}</div>
+    <div class="sl">Buyer Financing</div>
+    <div class="chart-wrap"><div class="chart-title">Financing Mix</div>
+      <div class="donut-wrap">${donutChart(td.financing,100)}<div class="donut-legend">${td.financing.map(f=>`<div class="dl-row"><div class="dl-dot" style="background:${f.color}"></div><span class="dl-label">${f.label}</span><span class="dl-pct">${f.pct}%</span></div>`).join('')}</div></div>
+    </div>
+    <div class="sl">Bedroom Price Ladder</div>
+    <div class="bed-ladder">
+      <div class="bl-row hdr"><div class="bl-cell">Bedrooms</div><div class="bl-cell">Sales</div><div class="bl-cell">Median</div></div>
+      ${td.bedrooms.map(b=>`<div class="bl-row"><div class="bl-cell bl-beds">${b.beds}</div><div class="bl-cell" style="font-size:11px;color:var(--mgray)">${b.count}</div><div class="bl-cell bl-price">${fmt$(b.median)}</div></div>`).join('')}
+    </div>
+    <div class="sl">Housing Stock Age</div>
+    <div class="decade-chart">
+      ${td.decades.map(d=>`<div class="decade-row"><div class="decade-label">${d.era}</div><div class="decade-bg"><div class="decade-fill" style="width:0%" data-w="${(d.pct/maxDecP)*100}%"></div></div><div class="decade-cnt">${d.count} (${d.pct}%)</div></div>`).join('')}
+    </div>`;
+
+  document.getElementById('t-body').innerHTML=`
+    <div id="tp-overview" class="t-mpanel active">${ovHtml}</div>
+    <div id="tp-trends" class="t-mpanel">${trHtml}</div>
+    <div id="tp-bands" class="t-mpanel">${bnHtml}</div>
+    <div id="tp-profile" class="t-mpanel">${prHtml}</div>`;
+
+  setTimeout(()=>{
+    document.querySelectorAll('.t-mbody [data-w]').forEach(b=>{b.style.width=b.dataset.w;});
+    applySelectables(document.getElementById('t-body'), name.toLowerCase());
+  },100);
+}
+
+function showTownTab(id,el){
+  document.querySelectorAll('.t-mtab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.t-mpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tp-'+id)?.classList.add('active');
+  setTimeout(()=>{document.querySelectorAll('.t-mbody [data-w]').forEach(b=>{b.style.width=b.dataset.w;});},80);
+}
+
+function closeTownModal(e){if(e.target===document.getElementById('town-overlay'))closeTownBtn();}
+function closeTownBtn(){document.getElementById('town-overlay').classList.remove('open');document.body.style.overflow='';}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+render();
+</script>
+</body>
+</html>
